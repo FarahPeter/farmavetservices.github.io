@@ -88,6 +88,8 @@ setInterval(() => {
 
 const aboutImages = [
   "images/About/1.jpeg",
+  "images/About/2.jpeg",
+  "images/About/3.jpeg",
   // Add all image paths here
 ];
 
