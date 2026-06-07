@@ -3,175 +3,268 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Farmavet</title>
+  <title>Farmavet Services — Veterinary &amp; Farm Care</title>
+  <meta name="description" content="Farmavet Services — trusted veterinary care for farm animals and pets, led by Dr Joseph Abou Nasser. Production animal medicine, pet care, and a fully stocked veterinary pharmacy." />
+  <meta name="theme-color" content="#2f6b3d" />
+  <link rel="icon" type="image/png" href="images/logo/farmavet.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header class="header-banner">
-  <img src="images/logo/farmavet.png" alt="Farmavet Logo" class="logo">
-  <br>
-  <span class="text-background">Your trusted veterinary partner</span>
-  <br>
+
+<header class="site-header">
+  <div class="container nav-inner">
+    <a class="brand" href="#home">
+      <img src="images/logo/farmavet.png" alt="Farmavet Services logo" />
+      <span>Farmavet Services
+        <small>Veterinary &amp; Farm Care</small>
+      </span>
+    </a>
+
+    <button class="menu-toggle" aria-label="Open menu" onclick="toggleNav()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#products" class="nav-link">Products</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="https://shop.farmavetservices.com" class="btn btn--accent">Visit Shop</a>
+    </nav>
+  </div>
 </header>
 
-
-<nav style="
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    flex-wrap: wrap;
-">
-  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-    <a href="#home" style="color: #fff; text-decoration: none;">Home</a>
-    <a href="#about" style="color: #fff; text-decoration: none;">About</a>
-    <a href="#services" style="color: #fff; text-decoration: none;">Services</a>
-    <a href="#products" style="color: #fff; text-decoration: none;">Products</a>
-    <a href="#contact" style="color: #fff; text-decoration: none;">Contact</a>
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="container">
+    <img src="images/logo/farmavet.png" alt="Farmavet Services" class="hero__logo" />
+    <h1>Your trusted veterinary partner</h1>
+    <p>Comprehensive veterinary care for both farm animals and pets. Whether you're managing a herd of cattle or caring for a beloved dog or cat, we're here to support the health and well-being of every animal in your life.</p>
+    <div class="hero-actions">
+      <a href="https://shop.farmavetservices.com" class="btn btn--accent btn--lg">Visit our online shop</a>
+      <a href="#contact" class="btn btn--outline btn--lg">Contact us</a>
+    </div>
   </div>
+</section>
 
-  <a href="https://shop.farmavetservices.com"
-     style="
-       display: inline-block;
-       padding: 10px 24px;
-       font-size: 16px;
-       font-weight: 600;
-       color: #000;
-       text-decoration: none;
-       border-radius: 999px;
-       background: rgba(255, 255, 255, 0.7);
-       backdrop-filter: blur(10px);
-       -webkit-backdrop-filter: blur(10px);
-       box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-       animation: glow 2s ease-in-out infinite alternate;
-       white-space: nowrap;
-     ">
-    Visit Shop
-  </a>
-</nav>
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">About us</span>
+      <h2>Rooted in science, driven by compassion</h2>
+    </div>
 
-<style>
-@keyframes glow {
-  from {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4),
-                0 0 20px rgba(255, 255, 255, 0.3);
-  }
-  to {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
-                0 0 40px rgba(255, 255, 255, 0.6);
-  }
-}
+    <div class="split">
+      <div class="prose">
+        <p>Farmavet Services was founded with a clear mission: to provide reliable, professional, and compassionate veterinary care for both farm animals and pets.</p>
+        <p>Led by <strong>Dr Joseph Abou Nasser</strong>, a Doctor of Veterinary Medicine specialized in production animals, our clinic brings together years of field experience — including work with major dairy farms, international organizations like the FAO, and advanced training in France. We understand the challenges farmers face and the importance of preventive care, productivity, and rapid response when it comes to herd health.</p>
+        <p>At the same time, we know how much your pets mean to you. That's why we also offer trusted pet care services, from vaccinations and medical treatment to proper nutrition and hygiene.</p>
 
-/* Optional: Make navbar responsive */
-@media (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-</style>
+        <h3>What sets us apart</h3>
+        <ul class="feature-list">
+          <li>Expertise in large animal medicine and reproductive services</li>
+          <li>A fully equipped veterinary pharmacy with quality medicines and pet supplies</li>
+          <li>Personalized attention for both farm animals and companion animals</li>
+          <li>Commitment to animal welfare, biosecurity, and client satisfaction</li>
+        </ul>
+      </div>
 
-  <section id="home">
-    <h2 class="section-title">Welcome to Farmavet Services</h2>
-    <p>👋 Welcome to Our Veterinary Clinic! At Farmavet Services, we are proud to provide comprehensive veterinary care for both farm animals and pets. Whether you're managing a herd of cattle or caring for a beloved dog or cat, we’re here to support the health and well-being of every animal in your life.</p>
-  </section>
+      <div class="carousel">
+        <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevAbout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="carousel__viewport"><img id="about-image" src="images/About/1.jpeg" alt="Farmavet Services in the field" /></div>
+        <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextAbout()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <section id="about">
-    <h2 class="section-title">About Us</h2>
-    <p>Farmavet Services was founded with a clear mission: to provide reliable, professional, and compassionate veterinary care for both farm animals and pets.<br>
-<br>
-Led by Dr Joseph Abou Nasser a Doctor of Veterinary Medicine specialized in production animals, our clinic brings together years of field experience, including work with major dairy farms, international organizations like the FAO, and advanced training in France. We understand the challenges farmers face and the importance of preventive care, productivity, and rapid response when it comes to herd health.<br>
-At the same time, we know how much your pets mean to you. That’s why we also offer trusted pet care services, from vaccinations and medical treatment to proper nutrition and hygiene.<br>
-<br>
-What Sets Us Apart:<br>
-Expertise in large animal medicine and reproductive services<br>
-A fully equipped veterinary pharmacy with quality medicines and pet supplies<br>
-Personalized attention for both farm animals and companion animals<br>
-Commitment to animal welfare, biosecurity, and client satisfaction<br>
-<br>
-Whether you’re a livestock producer seeking on-site service or a pet owner looking for a caring clinic, we’re here to help—rooted in science, driven by compassion.<br></p>
-      <br>
-        <div class="carousel">
-  <img id="about-image" src="images/About/1.jpeg" alt="About Image">
-</div>
-  </section>
+<!-- SERVICES -->
+<section id="services" class="section section--alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Our services</span>
+      <h2>Expert care for livestock and pets</h2>
+      <p>Professional veterinary expertise with personalized attention — whether you're a farmer, breeder, or pet owner.</p>
+    </div>
 
-  <section id="services">
-    <h2 class="section-title">Our Services</h2>
-    <p>🐄 Production Animal Services<br>
-We specialize in large animal medicine, offering expert care for cattle, sheep, and goats. Our services include:<br>
-Disease prevention and treatment<br>
-Reproductive services (Artificial incemenation, pregnancy diagnosis, etc.)<br>
-On site surgeries <br>
-On-farm consultations<br>
-Livestock vaccination programs<br>
-A fully stocked veterinary pharmacy<br>
-<br>
-🐶 Pet Care Services<br>
-Your pets are family, and they deserve the best care. We provide:<br>
-Routine vaccinations and checkups<br>
-Medical treatment for common illnesses<br>
-Quality pet food and supplements<br>
-Pet hygiene services including bathing and grooming<br>
-<br>
-Our goal is to combine professional veterinary expertise with personalized attention, whether you're a farmer, breeder, or pet owner.<br></p>
-    <br>
-        <div class="carousel">
-  <img id="service-image" src="images/services/1.jpeg" alt="Service Image">
-</div>
-  </section>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4a7 7 0 0 1 7 7c0 5-4 9-9 9z"/><path d="M11 20c0-4 2-7 5-9"/></svg>
+        </div>
+        <h3>Production Animal Services</h3>
+        <p class="muted" style="color:var(--muted);margin-bottom:14px;">Large animal medicine for cattle, sheep and goats.</p>
+        <ul class="feature-list">
+          <li>Disease prevention and treatment</li>
+          <li>Reproductive services (artificial insemination, pregnancy diagnosis, etc.)</li>
+          <li>On-site surgeries</li>
+          <li>On-farm consultations</li>
+          <li>Livestock vaccination programs</li>
+          <li>A fully stocked veterinary pharmacy</li>
+        </ul>
+      </div>
 
-  <section id="products">
-    <h2 class="section-title">Products</h2>
+      <div class="card">
+        <div class="card__icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="11" r="2"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="18" cy="11" r="2"/><path d="M12 12.5c-3 0-5 2.3-5 4.7 0 1.7 1.4 2.3 3 2.3 1 0 1.5-.4 2-.4s1 .4 2 .4c1.6 0 3-.6 3-2.3 0-2.4-2-4.7-5-4.7z"/></svg>
+        </div>
+        <h3>Pet Care Services</h3>
+        <p class="muted" style="color:var(--muted);margin-bottom:14px;">Your pets are family, and they deserve the best care.</p>
+        <ul class="feature-list">
+          <li>Routine vaccinations and checkups</li>
+          <li>Medical treatment for common illnesses</li>
+          <li>Quality pet food and supplements</li>
+          <li>Pet hygiene services including bathing and grooming</li>
+        </ul>
+      </div>
+    </div>
 
-    <p>At Farmavet Services, we proudly offer a wide range of high-quality veterinary products for both livestock and pets. Our goal is to ensure the health, productivity, and well-being of your animals with trusted brands and expert guidance.<br>
-<br>
-🐄 Livestock Products<br>
-We provide a full selection of veterinary solutions for cattle, sheep, goats, and other farm animals, including:<br>
-Veterinary medicines (antibiotics, anti-inflammatories, reproductive hormones)<br>
-Vaccines (clostridial, respiratory, enterotoxemia, etc.)<br>
-Antiparasitics (injectable, oral, pour-on)<br>
-Minerals and vitamin supplements<br>
-Mastitis treatments and udder care products<br>
-AI and reproductive tools (syringes, gloves, PGF2α, GnRH, etc.)<br>
-Calf tonics and oral rehydration salts<br>
-💊 All products are available at our licensed veterinary pharmacy, with veterinary advice on proper use and dosing.<br>
-<br>
-🐶 Pet Products<br>
-We care about your pets like you do. That’s why we offer trusted, effective, and safe products for dogs, cats, and small animals:<br>
-Vaccines and preventive care (anti-flea, tick, and deworming)<br>
-Prescription medications for common illnesses<br>
-Nutritional supplements for joints, coat, and digestion<br>
-Josera® premium pet food (puppy, adult, senior, special diets)<br>
-Shampoos and hygiene products<br>
-Basic accessories (bowls, leashes, collars, brushes)<br></p>
-    <br>
-        <div class="carousel">
-  <img id="product-image" src="images/products/product1.jpeg" alt="Product Image">
-</div>
-  </section>
+    <div class="carousel" style="margin-top:32px;">
+      <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevService()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="carousel__viewport"><img id="service-image" src="images/services/1.jpeg" alt="Our veterinary services" /></div>
+      <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextService()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
 
-  <section id="contact">
-    <h2 class="section-title">Contact Us</h2>
-    <p>Phone: 04 27 20 70</p>
-    <p>Emergency Phone: 03 10 21 21</p>
-    <p>
-    📍 <a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy"
-          target="_blank"
-          rel="noopener noreferrer"
-          style="color: #3cb371; text-decoration: underline;">
-      Find us on Google Maps
-    </a>
-      <br>
-      <br>
-      <br>
-    </p>
-  </section>
+<!-- PRODUCTS -->
+<section id="products" class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Our products</span>
+      <h2>Trusted brands for livestock &amp; pets</h2>
+      <p>A wide range of high-quality veterinary products to ensure the health, productivity, and well-being of your animals — with expert guidance.</p>
+    </div>
 
-  <footer>
-    <p>&copy; 2026 Farmavet. All rights reserved.</p>
-  </footer>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/></svg>
+        </div>
+        <h3>Livestock Products</h3>
+        <ul class="feature-list">
+          <li>Veterinary medicines (antibiotics, anti-inflammatories, reproductive hormones)</li>
+          <li>Vaccines (clostridial, respiratory, enterotoxemia, etc.)</li>
+          <li>Antiparasitics (injectable, oral, pour-on)</li>
+          <li>Minerals and vitamin supplements</li>
+          <li>Mastitis treatments and udder care products</li>
+          <li>AI and reproductive tools (syringes, gloves, PGF2α, GnRH, etc.)</li>
+          <li>Calf tonics and oral rehydration salts</li>
+        </ul>
+      </div>
 
-  <script src="script.js"></script>
+      <div class="card">
+        <div class="card__icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="11" r="2"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="18" cy="11" r="2"/><path d="M12 12.5c-3 0-5 2.3-5 4.7 0 1.7 1.4 2.3 3 2.3 1 0 1.5-.4 2-.4s1 .4 2 .4c1.6 0 3-.6 3-2.3 0-2.4-2-4.7-5-4.7z"/></svg>
+        </div>
+        <h3>Pet Products</h3>
+        <ul class="feature-list">
+          <li>Vaccines and preventive care (anti-flea, tick, and deworming)</li>
+          <li>Prescription medications for common illnesses</li>
+          <li>Nutritional supplements for joints, coat, and digestion</li>
+          <li>Josera® premium pet food (puppy, adult, senior, special diets)</li>
+          <li>Shampoos and hygiene products</li>
+          <li>Basic accessories (bowls, leashes, collars, brushes)</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:26px;">All products are available at our licensed veterinary pharmacy, with veterinary advice on proper use and dosing.</p>
+    <div style="text-align:center;">
+      <a href="https://shop.farmavetservices.com" class="btn btn--lg">Browse the online shop</a>
+    </div>
+
+    <div class="carousel" style="margin-top:32px;">
+      <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevProduct()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="carousel__viewport"><img id="product-image" src="images/products/product1.jpeg" alt="Our veterinary products" /></div>
+      <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextProduct()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section section--alt">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Get in touch</span>
+      <h2>Contact us</h2>
+      <p>We're here to help — for appointments, on-farm service, or emergencies.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="card">
+        <div class="contact-list">
+          <div class="contact-row">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+            <div><div class="label">Phone</div><div class="value"><a href="tel:042720 70">04 27 20 70</a></div></div>
+          </div>
+          <div class="contact-row">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.42 0z"/></svg></span>
+            <div><div class="label">Emergencies</div><div class="value"><a href="tel:0310 21 21">03 10 21 21</a></div></div>
+          </div>
+          <div class="contact-row">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <div><div class="label">Location</div><div class="value"><a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener noreferrer">Find us on Google Maps</a></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-cta">
+        <h3>Shop online, pay on delivery</h3>
+        <p>Order veterinary medicines, supplements and farm supplies from our online store — delivered to your door with cash on delivery.</p>
+        <a href="https://shop.farmavetservices.com" class="btn btn--accent btn--lg" style="align-self:flex-start;">Go to the shop</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">
+          <img src="images/logo/farmavet.png" alt="Farmavet Services" />
+          <strong>Farmavet Services</strong>
+        </div>
+        <p>Trusted veterinary care for farm animals and pets, with a fully stocked veterinary pharmacy — rooted in science, driven by compassion.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="#about">About us</a>
+        <a href="#services">Services</a>
+        <a href="#products">Products</a>
+        <a href="https://shop.farmavetservices.com">Online shop</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="tel:042720 70"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Orders: 04 27 20 70</a>
+        <a href="tel:0310 21 21"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.42 0z"/></svg>Emergencies: 03 10 21 21</a>
+        <a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>Google Maps</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">© 2026 Farmavet Services. All rights reserved.</div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>

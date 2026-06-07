@@ -1,19 +1,57 @@
-//V=1
+// Farmavet Services — landing page
 
-function submitForm(e) {
-  e.preventDefault();
-  const name = document.getElementById('name').value;
-  const email = document.getElementById('email').value;
-  const message = document.getElementById('message').value;
-
-  document.getElementById('form-status').innerText =
-    'Thank you, ' + name + '! Your message has been sent.';
-
-  document.getElementById('name').value = '';
-  document.getElementById('email').value = '';
-  document.getElementById('message').value = '';
+/* ---------- Mobile navigation ---------- */
+function toggleNav() {
+  var nav = document.getElementById('navLinks');
+  if (nav) nav.classList.toggle('open');
 }
-const productImages = [
+document.querySelectorAll('#navLinks a').forEach(function (a) {
+  a.addEventListener('click', function () {
+    var nav = document.getElementById('navLinks');
+    if (nav) nav.classList.remove('open');
+  });
+});
+
+/* ---------- Carousels (auto-cycle + manual controls) ---------- */
+function makeCarousel(imgId, images, intervalMs) {
+  var el = document.getElementById(imgId);
+  if (!el || !images.length) return { next: function () {}, prev: function () {} };
+
+  var i = 0;
+  function show() { el.src = images[i]; }
+  function step(dir) { i = (i + dir + images.length) % images.length; show(); }
+
+  var timer = setInterval(function () { step(1); }, intervalMs);
+  function reset() { clearInterval(timer); timer = setInterval(function () { step(1); }, intervalMs); }
+
+  // preload for smoother transitions
+  images.forEach(function (src) { var im = new Image(); im.src = src; });
+
+  return {
+    next: function () { step(1); reset(); },
+    prev: function () { step(-1); reset(); }
+  };
+}
+
+var aboutImages = [
+  "images/About/1.jpeg",
+  "images/About/2.jpeg",
+  "images/About/3.jpeg"
+];
+
+var serviceImages = [
+  "images/services/1.jpeg",
+  "images/services/2.jpeg",
+  "images/services/3.jpeg",
+  "images/services/4.jpeg",
+  "images/services/5.jpeg",
+  "images/services/6.jpeg",
+  "images/services/7.jpeg",
+  "images/services/8.jpeg",
+  "images/services/9.jpeg"
+];
+
+var productImages = [
   "images/products/product1.jpeg",
   "images/products/product2.jpeg",
   "images/products/product3.jpeg",
@@ -24,93 +62,16 @@ const productImages = [
   "images/products/product8.jpeg",
   "images/products/product9.jpeg",
   "images/products/product10.jpeg",
-  "images/products/product11.jpeg",
-  // Add all image paths here
+  "images/products/product11.jpeg"
 ];
 
-let currentImage = 0;
-const imageElement = document.getElementById("product-image");
+var aboutCar   = makeCarousel("about-image", aboutImages, 4000);
+var serviceCar = makeCarousel("service-image", serviceImages, 4000);
+var productCar = makeCarousel("product-image", productImages, 4000);
 
-function showImage(index) {
-  imageElement.src = productImages[index];
-}
-
-function nextImage() {
-  currentImage = (currentImage + 1) % productImages.length;
-  showImage(currentImage);
-}
-
-function prevImage() {
-  currentImage = (currentImage - 1 + productImages.length) % productImages.length;
-  showImage(currentImage);
-}
-// Auto-cycle images every 5 seconds
-setInterval(() => {
-  nextImage();
-}, 4000);
-
-const serviceImages = [
-  "images/services/1.jpeg",
-  "images/services/2.jpeg",
-  "images/services/3.jpeg",
-  "images/services/4.jpeg",
-  "images/services/5.jpeg",
-  "images/services/6.jpeg",
-  "images/services/7.jpeg",
-  "images/services/8.jpeg",
-  "images/services/9.jpeg",
-  // Add all service image paths here
-];
-
-let currentService = 0;
-const serviceImageElement = document.getElementById("service-image");
-
-function showService(index) {
-  serviceImageElement.src = serviceImages[index];
-}
-
-function nextService() {
-  currentService = (currentService + 1) % serviceImages.length;
-  showService(currentService);
-}
-
-function prevService() {
-  currentService = (currentService - 1 + serviceImages.length) % serviceImages.length;
-  showService(currentService);
-}
-
-// Auto-cycle service images every 5 seconds
-setInterval(() => {
-  nextService();
-}, 4000);
-
-
-
-const aboutImages = [
-  "images/About/1.jpeg",
-  "images/About/2.jpeg",
-  "images/About/3.jpeg",
-  // Add all image paths here
-];
-
-let currentaboutImage = 0;
-const aboutimageElement = document.getElementById("about-image");
-
-function showaboutImage(index) {
-  aboutimageElement.src = aboutImages[index];
-}
-
-function nextaboutImage() {
-  currentaboutImage = (currentaboutImage + 1) % aboutImages.length;
-  showaboutImage(currentaboutImage);
-}
-
-function prevaboutImage() {
-  currentaboutImage = (currentaboutImage - 1 + aboutImages.length) % aboutImages.length;
-  showaboutImage(currentaboutImage);
-}
-// Auto-cycle images every 5 seconds
-setInterval(() => {
-  nextaboutImage();
-}, 4000);
-
+function nextAbout()   { aboutCar.next(); }
+function prevAbout()   { aboutCar.prev(); }
+function nextService() { serviceCar.next(); }
+function prevService() { serviceCar.prev(); }
+function nextProduct() { productCar.next(); }
+function prevProduct() { productCar.prev(); }
