@@ -1,5 +1,6 @@
 /* Farmavet Services — scroll narrative
-   Architecture: one reveal IO, one farm-beats IO, one rAF scroll loop. */
+   Architecture: one reveal IO, one farm-beats IO, one rAF scroll loop
+   (reads batched before writes). */
 (function () {
   'use strict';
 
@@ -8,6 +9,13 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var desktop = window.matchMedia('(min-width: 1024px)');
   var finePointer = window.matchMedia('(pointer: fine)');
+  var wideNav = window.matchMedia('(min-width: 900px)');
+
+  // Safari <=13 has no MediaQueryList.addEventListener
+  function onMQ(mql, fn) {
+    if (mql.addEventListener) mql.addEventListener('change', fn);
+    else if (mql.addListener) mql.addListener(fn);
+  }
 
   /* ---------- Navigation ---------- */
   var nav = d.querySelector('.nav');
@@ -40,11 +48,17 @@
       if (menu.hidden) return;
       if (e.key === 'Escape') { setMenu(false); burger.focus(); }
       if (e.key === 'Tab') {
-        var links = menu.querySelectorAll('a');
-        var firstEl = links[0], lastEl = links[links.length - 1];
-        if (e.shiftKey && d.activeElement === firstEl) { e.preventDefault(); lastEl.focus(); }
-        else if (!e.shiftKey && d.activeElement === lastEl) { e.preventDefault(); firstEl.focus(); }
+        // trap cycles through the burger (close control) plus the menu links
+        var items = [burger].concat(Array.prototype.slice.call(menu.querySelectorAll('a')));
+        var idx = items.indexOf(d.activeElement);
+        if (idx === -1) { e.preventDefault(); items[0].focus(); return; }
+        if (e.shiftKey && idx === 0) { e.preventDefault(); items[items.length - 1].focus(); }
+        else if (!e.shiftKey && idx === items.length - 1) { e.preventDefault(); items[0].focus(); }
       }
+    });
+    // leaving the mobile breakpoint with the sheet open would strand the scroll lock
+    onMQ(wideNav, function () {
+      if (wideNav.matches && !menu.hidden) setMenu(false);
     });
   }
 
@@ -58,6 +72,12 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
   d.querySelectorAll('[data-reveal]').forEach(function (el) { revealIO.observe(el); });
+
+  // keyboard users can Tab into content before it scrolls into view
+  d.addEventListener('focusin', function (e) {
+    var el = e.target.closest && e.target.closest('[data-reveal]:not(.in)');
+    if (el) { el.classList.add('in'); revealIO.unobserve(el); }
+  });
 
   /* ---------- Hero load sequence ---------- */
   var hero = d.querySelector('.hero');
@@ -96,12 +116,15 @@
 
   function enableBeats() {
     if (beatsIO || !farm) return;
-    loadStack();
     farm.classList.add('farm--js');
     activateBeat(0);
+    // if the farm section is already near (e.g. resized up mid-page), load now;
+    // otherwise the preload observer below fetches one viewport ahead
+    if (farm.getBoundingClientRect().top < window.innerHeight * 2) loadStack();
     beatsIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
+          loadStack();
           activateBeat(parseInt(entry.target.getAttribute('data-beat'), 10));
         }
       });
@@ -121,9 +144,9 @@
     if (desktop.matches) enableBeats(); else disableBeats();
   }
   syncBeats();
-  desktop.addEventListener('change', syncBeats);
+  onMQ(desktop, syncBeats);
 
-  // Preload the stack one viewport ahead even before first activation
+  // fetch the stack one viewport ahead so the first crossfade never pops blank
   if (farm) {
     var preloadIO = new IntersectionObserver(function (entries) {
       if (entries[0].isIntersecting && desktop.matches) {
@@ -141,8 +164,6 @@
       var revealed = gate.classList.toggle('revealed');
       gate.querySelector('.gate__label').textContent =
         revealed ? 'Field surgery — tap to hide' : 'Field surgery — tap to view';
-      gate.setAttribute('aria-label',
-        revealed ? 'Hide field surgery photo' : 'Show field surgery photo (graphic)');
     });
   }
 
@@ -166,34 +187,52 @@
   /* ---------- Scroll cue ---------- */
   var cue = d.querySelector('.hero__cue');
 
-  /* ---------- rAF scroll loop ---------- */
-  var parallaxEls = Array.prototype.slice.call(d.querySelectorAll('[data-parallax]'));
+  /* ---------- Pharmacy strip drift mode ---------- */
   var strip = d.querySelector('.strip');
   var stripTrack = d.querySelector('.strip__track');
+  function syncDrift() {
+    if (!strip || !stripTrack) return;
+    var on = desktop.matches && finePointer.matches && !reduce.matches;
+    strip.classList.toggle('drift', on);
+    if (!on) stripTrack.style.transform = '';
+  }
+  syncDrift();
+  onMQ(desktop, syncDrift);
+  onMQ(finePointer, syncDrift);
+
+  /* ---------- rAF scroll loop (batch reads, then writes) ---------- */
+  var parallaxEls = Array.prototype.slice.call(d.querySelectorAll('[data-parallax]'))
+    .map(function (el) {
+      return { el: el, depth: parseFloat(el.getAttribute('data-parallax')), frame: el.closest('figure, .mega') || el };
+    });
   var ticking = false;
 
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
   function update() {
     ticking = false;
+    var motion = !reduce.matches;
+
+    /* -- reads -- */
     var y = window.pageYOffset;
     var vh = window.innerHeight;
-
-    // Nav state + scroll progress bar
-    nav.classList.toggle('scrolled', y > 24);
     var max = root.scrollHeight - vh;
-    root.style.setProperty('--scroll-p', max > 0 ? (y / max).toFixed(4) : '0');
+    var mRect = motion && words.length ? manifesto.getBoundingClientRect() : null;
+    var pRects = motion ? parallaxEls.map(function (p) { return p.frame.getBoundingClientRect(); }) : null;
+    var sRect = motion && strip && strip.classList.contains('drift') ? strip.getBoundingClientRect() : null;
+    var sOverflow = sRect ? stripTrack.scrollWidth - strip.clientWidth : 0;
 
+    /* -- writes -- */
+    nav.classList.toggle('scrolled', y > 24);
+    root.style.setProperty('--scroll-p', max > 0 ? (y / max).toFixed(4) : '0');
     if (cue && y > 40 && !cue.classList.contains('gone')) cue.classList.add('gone');
 
-    if (reduce.matches) {
+    if (!motion) {
       if (inkCount !== words.length) inkAll();
       return;
     }
 
-    // Manifesto word scrub
-    if (words.length) {
-      var mRect = manifesto.getBoundingClientRect();
+    if (mRect) {
       var p = clamp01((vh * 0.8 - mRect.top) / (mRect.height + vh * 0.35));
       var count = Math.round(p * words.length * 1.1);
       if (count !== inkCount) {
@@ -202,30 +241,17 @@
       }
     }
 
-    // Parallax (inside overflow-hidden frames only)
-    parallaxEls.forEach(function (el) {
-      var frame = el.parentElement.getBoundingClientRect
-        ? el.closest('figure, .mega') : null;
-      var rect = (frame || el).getBoundingClientRect();
+    parallaxEls.forEach(function (p, i) {
+      var rect = pRects[i];
       if (rect.bottom < -80 || rect.top > vh + 80) return;
-      var depth = parseFloat(el.getAttribute('data-parallax'));
-      var prog = (rect.top + rect.height / 2 - vh / 2) / vh; // -0.5..0.5-ish
-      var shift = Math.max(-1, Math.min(1, prog)) * depth * rect.height * 0.5;
-      el.style.transform = 'translate3d(0,' + shift.toFixed(1) + 'px,0)';
+      var prog = (rect.top + rect.height / 2 - vh / 2) / vh;
+      var shift = Math.max(-1, Math.min(1, prog)) * p.depth * rect.height * 0.5;
+      p.el.style.transform = 'translate3d(0,' + shift.toFixed(1) + 'px,0)';
     });
 
-    // Pharmacy strip drift (desktop fine-pointer only)
-    if (strip && stripTrack && desktop.matches && finePointer.matches) {
-      var sRect = strip.getBoundingClientRect();
-      if (sRect.bottom > 0 && sRect.top < vh) {
-        var overflow = stripTrack.scrollWidth - strip.clientWidth;
-        if (overflow > 0) {
-          var sp = clamp01((vh - sRect.top) / (vh + sRect.height));
-          stripTrack.style.transform = 'translate3d(' + (-sp * overflow).toFixed(1) + 'px,0,0)';
-        }
-      }
-    } else if (stripTrack && stripTrack.style.transform) {
-      stripTrack.style.transform = '';
+    if (sRect && sRect.bottom > 0 && sRect.top < vh && sOverflow > 0) {
+      var sp = clamp01((vh - sRect.top) / (vh + sRect.height));
+      stripTrack.style.transform = 'translate3d(' + (-sp * sOverflow).toFixed(1) + 'px,0,0)';
     }
   }
 
@@ -234,12 +260,12 @@
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
-  reduce.addEventListener('change', function () {
+  onMQ(reduce, function () {
     if (reduce.matches) {
       inkAll();
-      parallaxEls.forEach(function (el) { el.style.transform = ''; });
-      if (stripTrack) stripTrack.style.transform = '';
+      parallaxEls.forEach(function (p) { p.el.style.transform = ''; });
     }
+    syncDrift();
     onScroll();
   });
   update();

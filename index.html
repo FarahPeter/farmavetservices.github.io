@@ -6,15 +6,23 @@
   <title>Farmavet Services — Care, from pasture to paw</title>
   <meta name="description" content="Farmavet Services — Dr Joseph Abou Nasser, DVM. Farm animal medicine, pet care and a licensed veterinary pharmacy in Lebanon, with online ordering and cash on delivery." />
   <meta name="theme-color" content="#faf6ec" />
+  <link rel="canonical" href="https://farmavetservices.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://farmavetservices.com/" />
   <meta property="og:title" content="Farmavet Services — Care, from pasture to paw" />
   <meta property="og:description" content="Farm medicine, pet care and a licensed veterinary pharmacy — all under one roof." />
-  <meta property="og:image" content="https://farmavetservices.com/images/web/landscape-landscape-1600.jpg" />
+  <meta property="og:image" content="https://farmavetservices.com/images/web/hero-wide-1920.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" href="images/web/logo-96.png" />
   <link rel="preload" as="font" type="font/woff2" href="fonts/poppins-600-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="fonts/inter-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-500-latin.woff2" crossorigin />
+  <link rel="preload" as="image" type="image/webp" href="images/web/hero-tall-800.webp"
+        media="(max-width: 760px)" />
   <link rel="preload" as="image" type="image/webp"
-        imagesrcset="images/web/landscape-landscape-800.webp 800w, images/web/landscape-landscape-1600.webp 1600w"
-        imagesizes="(min-width: 1360px) 1280px, 94vw" />
+        imagesrcset="images/web/hero-wide-1280.webp 1280w, images/web/hero-wide-1920.webp 1920w"
+        imagesizes="(min-width: 1360px) 1280px, 94vw"
+        media="(min-width: 761px)" />
   <link rel="stylesheet" href="fonts/fonts.css" />
   <link rel="stylesheet" href="style.css" />
   <script>document.documentElement.classList.add('js');</script>
@@ -45,7 +53,7 @@
   <div class="nav__progress" aria-hidden="true"></div>
 </header>
 
-<div id="menu" class="menu" hidden>
+<div id="menu" class="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
   <nav aria-label="Menu">
     <a href="#farm" style="--i:0">For the farm</a>
     <a href="#pets" style="--i:1">For your pet</a>
@@ -74,11 +82,13 @@
     </div>
     <figure class="hero__media">
       <picture>
-        <source type="image/webp" srcset="images/web/landscape-landscape-800.webp 800w, images/web/landscape-landscape-1600.webp 1600w" sizes="(min-width: 1360px) 1280px, 94vw" />
-        <img src="images/web/landscape-landscape-1600.jpg"
-             srcset="images/web/landscape-landscape-800.jpg 800w, images/web/landscape-landscape-1600.jpg 1600w"
+        <source media="(max-width: 760px)" type="image/webp" srcset="images/web/hero-tall-800.webp" />
+        <source media="(max-width: 760px)" srcset="images/web/hero-tall-800.jpg" />
+        <source type="image/webp" srcset="images/web/hero-wide-1280.webp 1280w, images/web/hero-wide-1920.webp 1920w" sizes="(min-width: 1360px) 1280px, 94vw" />
+        <img src="images/web/hero-wide-1920.jpg"
+             srcset="images/web/hero-wide-1280.jpg 1280w, images/web/hero-wide-1920.jpg 1920w"
              sizes="(min-width: 1360px) 1280px, 94vw"
-             width="1600" height="2133" fetchpriority="high" decoding="async"
+             width="1920" height="1051" fetchpriority="high" decoding="async"
              data-parallax="0.15"
              alt="Dr Joseph Abou Nasser standing in a pasture among his client's dairy cows" />
       </picture>
@@ -176,11 +186,12 @@
             <li>Newborn calf care</li>
             <li>On-site surgeries</li>
           </ul>
-          <button class="gate" type="button" aria-label="Show field surgery photo (graphic)">
+          <button class="gate" type="button">
             <span class="gate__thumb">
-              <img src="images/web/services-8-800.jpg" width="96" height="96" loading="lazy" decoding="async" alt="" />
+              <img src="images/web/gate-thumb-160.webp" width="160" height="160" loading="lazy" decoding="async" alt="" />
             </span>
             <span class="gate__label">Field surgery — tap to view</span>
+            <span class="sr-only">(graphic photo)</span>
           </button>
         </article>
 
@@ -193,11 +204,11 @@
           </figure>
           <p class="beat__num" aria-hidden="true">03</p>
           <h3>Herd health, on your farm.</h3>
-          <p>Prevention beats treatment. We build vaccination and prevention programs around your herd — and we come to you, with a 24/7 line for the moments that can't wait.</p>
+          <p>Prevention beats treatment. We build vaccination and prevention programs around your herd — and we come to you, with an emergency line for the moments that can't wait.</p>
           <ul class="checklist">
             <li>Livestock vaccination programs</li>
             <li>Disease prevention &amp; mastitis control</li>
-            <li>On-farm consultations, 24/7 emergencies</li>
+            <li>On-farm consultations &amp; emergencies</li>
           </ul>
         </article>
       </div>
@@ -208,8 +219,8 @@
   <section class="pets" id="pets" aria-labelledby="pets-title">
     <div class="container section-head">
       <p class="kicker" data-reveal style="--stagger:0">03 — For your pet</p>
-      <h2 id="pets-title" data-reveal style="--stagger:1">For your pet.</h2>
-      <p class="section-sub" data-reveal style="--stagger:2">The same rigor we bring to the barn, sized for your sofa.</p>
+      <h2 id="pets-title" data-reveal style="--stagger:1">Small patients, same standard.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">The rigor we bring to the barn, sized for your sofa — because your pets are family.</p>
     </div>
     <div class="container">
       <figure class="pets__banner" data-reveal>
@@ -259,26 +270,52 @@
     <div class="strip" data-reveal tabindex="0" role="group" aria-label="Photos of the pharmacy and shop">
       <ul class="strip__track">
         <li><img src="images/web/About-1-800.webp" width="800" height="1422" loading="lazy" decoding="async" alt="The Farmavet Services clinic storefront" /></li>
-        <li><img src="images/web/products-product1-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Inside the veterinary pharmacy" /></li>
-        <li><img src="images/web/products-product3-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Shelves of veterinary medicines" /></li>
-        <li><img src="images/web/products-product4-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Veterinary products on display" /></li>
-        <li><img src="images/web/products-product6-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Pet food and supplements" /></li>
-        <li><img src="images/web/products-product7-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Farm supplies and veterinary equipment" /></li>
+        <li><img src="images/web/products-product7-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Shelves of veterinary medicines in the pharmacy" /></li>
+        <li><img src="images/web/products-product3-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Josera pet food display and pet accessories wall" /></li>
+        <li><img src="images/web/products-product1-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Pet collars and leashes on display" /></li>
+        <li><img src="images/web/products-product6-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Shelves of pet accessories — bowls, brushes and toys" /></li>
+        <li><img src="images/web/products-product4-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Feeding bowls and travel water bottles" /></li>
       </ul>
     </div>
-    <p class="strip__caption container" data-reveal>Medicines · vaccines · antiparasitics · minerals &amp; supplements · AI tools · Josera pet food · accessories</p>
+    <p class="strip__caption container" data-reveal>Everything below is on our shelves — with a vet behind the counter.</p>
+
+    <div class="container stock" data-reveal>
+      <div class="stock__col">
+        <h3>For the farm</h3>
+        <ul class="checklist">
+          <li>Veterinary medicines — antibiotics, anti&#8209;inflammatories, reproductive hormones</li>
+          <li>Vaccines — clostridial, respiratory, enterotoxemia and more</li>
+          <li>Antiparasitics — injectable, oral and pour&#8209;on</li>
+          <li>Minerals &amp; vitamin supplements</li>
+          <li>Mastitis treatments &amp; udder care</li>
+          <li>AI &amp; reproductive tools — syringes, gloves, PGF2α, GnRH</li>
+          <li>Calf tonics &amp; oral rehydration salts</li>
+        </ul>
+      </div>
+      <div class="stock__col">
+        <h3>For your pet</h3>
+        <ul class="checklist">
+          <li>Vaccines &amp; preventive care — flea, tick and deworming</li>
+          <li>Prescription medications for common illnesses</li>
+          <li>Supplements for joints, coat and digestion</li>
+          <li>Josera® premium food — puppy, adult, senior, special diets</li>
+          <li>Shampoos &amp; hygiene products</li>
+          <li>Accessories — bowls, leashes, collars, brushes</li>
+        </ul>
+      </div>
+    </div>
 
     <div class="container">
       <div class="mega" data-reveal>
         <img class="mega__mark" src="images/web/logo-320.png" alt="" width="320" height="320" loading="lazy" decoding="async" data-parallax="0.08" />
         <h2>Everything in the pharmacy, delivered to your door.</h2>
-        <p>Order online — pay cash on delivery, anywhere in Lebanon.</p>
+        <p>Order online — pay cash on delivery.</p>
         <a class="pill pill--amber pill--xl" href="https://shop.farmavetservices.com">Shop at shop.farmavetservices.com →</a>
         <p class="mega__alt">Or call to order: <a href="tel:+9614272070">04 27 20 70</a></p>
         <ul class="mega__chips" role="list">
           <li>Cash on delivery</li>
           <li>Licensed pharmacy</li>
-          <li>Delivery across Lebanon</li>
+          <li>Vet advice included</li>
         </ul>
       </div>
     </div>
@@ -319,14 +356,14 @@
   <section class="contact" id="contact" aria-labelledby="contact-title">
     <div class="container section-head">
       <p class="kicker" data-reveal style="--stagger:0">06 — Talk to us</p>
-      <h2 id="contact-title" data-reveal style="--stagger:1">Talk to us.</h2>
-      <p class="section-sub" data-reveal style="--stagger:2">For appointments, on-farm service, orders — or the middle-of-the-night emergency.</p>
+      <h2 id="contact-title" data-reveal style="--stagger:1">We're here when you need us.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">For appointments, on-farm service, orders — or emergencies.</p>
     </div>
     <div class="container contact__grid">
       <a class="tile tile--amber" href="tel:+9613102121" data-reveal style="--stagger:0">
-        <span class="tile__label"><i class="tile__dot" aria-hidden="true"></i>24/7 emergency</span>
+        <span class="tile__label"><i class="tile__dot" aria-hidden="true"></i>Emergency line</span>
         <span class="tile__value">03 10 21 21</span>
-        <span class="tile__hint">Tap to call, any hour</span>
+        <span class="tile__hint">Tap to call</span>
       </a>
       <a class="tile" href="tel:+9614272070" data-reveal style="--stagger:1">
         <span class="tile__label">Orders &amp; clinic</span>

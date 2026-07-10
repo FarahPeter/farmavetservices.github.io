@@ -102,6 +102,15 @@ h3 { font-size: var(--fs-h3); line-height: 1.2; }
 }
 .skip-link:focus-visible { top: 12px; }
 
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* focus rings must stay visible on dark and amber surfaces */
+.mega :focus-visible, .footer :focus-visible { outline-color: var(--cream); }
+.tile--amber:focus-visible, .pill--amber:focus-visible { outline-color: var(--ink); }
+
 .eyebrow, .kicker {
   font-family: var(--font-body); font-weight: 500;
   font-size: var(--fs-caption); text-transform: uppercase;
@@ -227,7 +236,7 @@ h3 { font-size: var(--fs-h3); line-height: 1.2; }
 .hero__media img {
   position: absolute; left: 0; top: -7.5%;
   width: 100%; height: 115%;
-  object-fit: cover; object-position: 50% 54%;
+  object-fit: cover;
   will-change: transform;
 }
 .js .hero__media { clip-path: inset(6% round var(--r-frame)); transform: scale(1.03); }
@@ -342,6 +351,11 @@ html:not(.js) .manifesto span { color: var(--ink); }
   .farm__beats .beat__media { display: none; }
   .farm--js .beat { opacity: .45; transition: opacity .3s var(--ease-soft); }
   .farm--js .beat.active { opacity: 1; }
+  /* no-JS fallback: hide the JS-driven stack, keep inline figures */
+  html:not(.js) .farm__stackcol { display: none; }
+  html:not(.js) .farm__beats .beat__media { display: block; }
+  html:not(.js) .farm__split { grid-template-columns: 1fr; }
+  html:not(.js) .farm__beats .beat { min-height: 0; padding: clamp(28px, 6vh, 56px) 0; }
 }
 
 /* ---------- Pets ---------- */
@@ -393,12 +407,23 @@ html:not(.js) .manifesto span { color: var(--ink); }
 }
 .strip__caption {
   text-align: center; color: var(--ink-soft); font-size: .92rem;
-  margin-top: 22px; margin-bottom: clamp(48px, 8vh, 88px);
+  margin-top: 22px; margin-bottom: clamp(40px, 6vh, 64px);
 }
-@media (pointer: fine) and (min-width: 1024px) {
-  .js .strip { overflow: hidden; }
-  .js .strip__track { will-change: transform; }
+
+.stock {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 56px);
+  max-width: 1000px;
+  margin-bottom: clamp(48px, 8vh, 88px);
 }
+.stock h3 { font-size: 1.1rem; margin-bottom: 16px; color: var(--green-800); }
+.stock .checklist { font-size: .95rem; color: var(--ink); }
+@media (max-width: 700px) {
+  .stock { grid-template-columns: 1fr; }
+}
+/* .drift is applied by JS only when desktop + fine pointer + motion allowed */
+.strip.drift { overflow: hidden; }
+.strip.drift .strip__track { will-change: transform; }
 
 .mega {
   position: relative; overflow: hidden;
@@ -455,17 +480,18 @@ html:not(.js) .manifesto span { color: var(--ink); }
   font-size: var(--fs-caption); font-weight: 500; text-transform: uppercase; letter-spacing: .14em;
   color: var(--ink-soft);
 }
-.tile--amber .tile__label { color: rgba(30, 43, 34, .75); }
+.tile--amber .tile__label { color: var(--ink); }
 .tile__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); animation: pulse 2s var(--ease-soft) infinite; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
 .tile__value {
-  font-family: var(--font-head); font-weight: 600; font-size: var(--fs-h2);
+  font-family: var(--font-head); font-weight: 600;
+  font-size: clamp(1.6rem, .5rem + 2.2vw, 3rem); white-space: nowrap;
   font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -.01em;
 }
 .tile__value--sm { font-size: var(--fs-h3); display: inline-flex; align-items: center; gap: 10px; }
 .tile__value--sm svg { width: 26px; height: 26px; color: var(--green-700); }
 .tile__hint { color: var(--ink-soft); font-size: .92rem; }
-.tile--amber .tile__hint { color: rgba(30, 43, 34, .75); }
+.tile--amber .tile__hint { color: var(--ink); }
 
 /* ---------- Footer ---------- */
 .footer { background: var(--ink); color: var(--cream); padding: clamp(48px, 7vh, 72px) 0 0; }
@@ -492,10 +518,11 @@ html:not(.js) .manifesto span { color: var(--ink); }
 }
 
 /* ---------- Rendering hints ---------- */
-.pets, .pharmacy, .trusted, .contact {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
-}
+.pets, .pharmacy, .trusted, .contact { content-visibility: auto; }
+.pets { contain-intrinsic-size: auto 1500px; }
+.pharmacy { contain-intrinsic-size: auto 1900px; }
+.trusted { contain-intrinsic-size: auto 750px; }
+.contact { contain-intrinsic-size: auto 780px; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 899px) {
@@ -509,13 +536,14 @@ html:not(.js) .manifesto span { color: var(--ink); }
 
 @media (max-width: 1023px) {
   .doctor__grid { grid-template-columns: 1fr; gap: 36px; }
-  .doctor__media { order: -1; aspect-ratio: 3 / 4; max-width: 520px; margin: 0 auto; }
+  /* explicit width required: the figure's only child is absolutely positioned,
+     so auto margins + content sizing would collapse it to 0x0 */
+  .doctor__media { order: -1; aspect-ratio: 3 / 4; width: min(100%, 520px); margin: 0 auto; }
   .doctor__media img { top: 0; height: 100%; }
 }
 
 @media (max-width: 760px) {
   .hero__media { aspect-ratio: 4 / 5; }
-  .hero__media img { object-position: 42% center; }
   .hero__ctas .pill { flex: 1 1 100%; }
   .pets__cards { grid-template-columns: 1fr; }
   .pets__banner { aspect-ratio: 4 / 3; }
