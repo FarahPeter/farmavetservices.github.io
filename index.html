@@ -3,268 +3,405 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Farmavet Services — Veterinary &amp; Farm Care</title>
-  <meta name="description" content="Farmavet Services — trusted veterinary care for farm animals and pets, led by Dr Joseph Abou Nasser. Production animal medicine, pet care, and a fully stocked veterinary pharmacy." />
-  <meta name="theme-color" content="#2f6b3d" />
-  <link rel="icon" type="image/png" href="images/logo/farmavet.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet" />
+  <title>Farmavet Services — Care, from pasture to paw</title>
+  <meta name="description" content="Farmavet Services — Dr Joseph Abou Nasser, DVM. Farm animal medicine, pet care and a licensed veterinary pharmacy in Lebanon, with online ordering and cash on delivery." />
+  <meta name="theme-color" content="#faf6ec" />
+  <link rel="canonical" href="https://farmavetservices.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://farmavetservices.com/" />
+  <meta property="og:title" content="Farmavet Services — Care, from pasture to paw" />
+  <meta property="og:description" content="Farm medicine, pet care and a licensed veterinary pharmacy — all under one roof." />
+  <meta property="og:image" content="https://farmavetservices.com/images/web/hero-wide-1920.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="images/web/logo-96.png" />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/poppins-600-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/inter-500-latin.woff2" crossorigin />
+  <link rel="preload" as="image" type="image/webp" href="images/web/hero-tall-800.webp"
+        media="(max-width: 760px)" />
+  <link rel="preload" as="image" type="image/webp"
+        imagesrcset="images/web/hero-wide-1280.webp 1280w, images/web/hero-wide-1920.webp 1920w"
+        imagesizes="(min-width: 1360px) 1280px, 94vw"
+        media="(min-width: 761px)" />
+  <link rel="stylesheet" href="fonts/fonts.css" />
   <link rel="stylesheet" href="style.css" />
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="container nav-inner">
-    <a class="brand" href="#home">
-      <img src="images/logo/farmavet.png" alt="Farmavet Services logo" />
-      <span>Farmavet Services
-        <small>Veterinary &amp; Farm Care</small>
-      </span>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav" id="top">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#top" aria-label="Farmavet Services — back to top">
+      <img src="images/web/logo-96.png" alt="" width="40" height="40" />
+      <span>Farmavet<em>Services</em></span>
     </a>
-
-    <button class="menu-toggle" aria-label="Open menu" onclick="toggleNav()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-
-    <nav class="nav-links" id="navLinks" aria-label="Primary">
-      <a href="#home" class="nav-link">Home</a>
-      <a href="#about" class="nav-link">About</a>
-      <a href="#services" class="nav-link">Services</a>
-      <a href="#products" class="nav-link">Products</a>
-      <a href="#contact" class="nav-link">Contact</a>
-      <a href="https://shop.farmavetservices.com" class="btn btn--accent">Visit Shop</a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#farm">Farm</a>
+      <a href="#pets">Pets</a>
+      <a href="#pharmacy">Pharmacy</a>
+      <a href="#contact">Contact</a>
     </nav>
+    <div class="nav__actions">
+      <a class="pill pill--amber nav__shop" href="https://shop.farmavetservices.com">Shop online<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <button class="nav__burger" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
   </div>
+  <div class="nav__progress" aria-hidden="true"></div>
 </header>
 
-<!-- HERO -->
-<section id="home" class="hero">
-  <div class="container">
-    <img src="images/logo/farmavet.png" alt="Farmavet Services" class="hero__logo" />
-    <h1>Your trusted veterinary partner</h1>
-    <p>Comprehensive veterinary care for both farm animals and pets. Whether you're managing a herd of cattle or caring for a beloved dog or cat, we're here to support the health and well-being of every animal in your life.</p>
-    <div class="hero-actions">
-      <a href="https://shop.farmavetservices.com" class="btn btn--accent btn--lg">Visit our online shop</a>
-      <a href="#contact" class="btn btn--outline btn--lg">Contact us</a>
+<div id="menu" class="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
+  <nav aria-label="Menu">
+    <a href="#farm" style="--i:0">For the farm</a>
+    <a href="#pets" style="--i:1">For your pet</a>
+    <a href="#pharmacy" style="--i:2">The pharmacy</a>
+    <a href="#trusted" style="--i:3">On the record</a>
+    <a href="#contact" style="--i:4">Talk to us</a>
+    <a class="pill pill--amber" href="https://shop.farmavetservices.com" style="--i:5">Shop online →</a>
+  </nav>
+</div>
+
+<main id="main">
+
+  <!-- 1 · HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero__copy">
+      <p class="eyebrow hero__load" style="--i:0">Veterinary clinic &amp; pharmacy — Lebanon</p>
+      <h1 id="hero-title">
+        <span class="hero__line hero__load" style="--i:1">Care, from <em>pasture</em></span>
+        <span class="hero__line hero__load" style="--i:2">to <em>paw</em>.</span>
+      </h1>
+      <p class="hero__sub hero__load" style="--i:3">Dr Joseph Abou Nasser, DVM — farm medicine, pet care and a licensed veterinary pharmacy, all under one roof.</p>
+      <div class="hero__ctas hero__load" style="--i:4">
+        <a class="pill pill--amber pill--lg" href="https://shop.farmavetservices.com">Shop online</a>
+        <a class="pill pill--ghost pill--lg" href="tel:+9613102121">Emergency: 03 10 21 21</a>
+      </div>
     </div>
-  </div>
-</section>
+    <figure class="hero__media">
+      <picture>
+        <source media="(max-width: 760px)" type="image/webp" srcset="images/web/hero-tall-800.webp" />
+        <source media="(max-width: 760px)" srcset="images/web/hero-tall-800.jpg" />
+        <source type="image/webp" srcset="images/web/hero-wide-1280.webp 1280w, images/web/hero-wide-1920.webp 1920w" sizes="(min-width: 1360px) 1280px, 94vw" />
+        <img src="images/web/hero-wide-1920.jpg"
+             srcset="images/web/hero-wide-1280.jpg 1280w, images/web/hero-wide-1920.jpg 1920w"
+             sizes="(min-width: 1360px) 1280px, 94vw"
+             width="1920" height="1051" fetchpriority="high" decoding="async"
+             data-parallax="0.15"
+             alt="Dr Joseph Abou Nasser standing in a pasture among his client's dairy cows" />
+      </picture>
+    </figure>
+    <div class="hero__cue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </section>
 
-<!-- ABOUT -->
-<section id="about" class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">About us</span>
-      <h2>Rooted in science, driven by compassion</h2>
+  <!-- 2 · MANIFESTO -->
+  <section class="manifesto" aria-label="Our promise">
+    <p class="container" id="manifesto-copy">
+      <span>One</span> <span>doctor.</span> <span>Two</span> <span>worlds.</span>
+      <span>From</span> <span>the</span> <span>dairy</span> <span>barn</span>
+      <span>to</span> <span>the</span> <span>dog</span> <span>on</span> <span>your</span> <span>couch</span> <span>—</span>
+      <span>the</span> <span>same</span> <span>standard</span> <span>of</span> <span>care,</span>
+      <span>the</span> <span>same</span> <span>medicine</span> <span>you</span> <span>can</span> <span>trust.</span>
+    </p>
+  </section>
+
+  <!-- 3 · THE DOCTOR -->
+  <section class="doctor" id="doctor" aria-labelledby="doctor-title">
+    <div class="container doctor__grid">
+      <div class="doctor__text">
+        <p class="kicker" data-reveal style="--stagger:0">01 — The doctor</p>
+        <h2 id="doctor-title" data-reveal style="--stagger:1">Meet Dr Joseph Abou&nbsp;Nasser</h2>
+        <p data-reveal style="--stagger:2">A Doctor of Veterinary Medicine specialised in production animals, Dr Joseph has spent years in dairy barns — treating, preventing, and keeping herds productive through every season.</p>
+        <p data-reveal style="--stagger:3">His field experience with major dairy farms and international organisations like the FAO, together with advanced training in France, shaped Farmavet Services: a clinic built on science, run with compassion.</p>
+        <ul class="chips" data-reveal style="--stagger:4" role="list">
+          <li>DVM</li>
+          <li>FAO field experience</li>
+          <li>Trained in France</li>
+        </ul>
+        <blockquote class="pullquote" data-reveal style="--stagger:5"><span>Healthy herds feed families.</span></blockquote>
+      </div>
+      <figure class="doctor__media" data-reveal>
+        <picture>
+          <source type="image/webp" srcset="images/web/services-3-800.webp" />
+          <img src="images/web/services-3-800.jpg" width="800" height="1066" loading="lazy" decoding="async"
+               data-parallax="0.2"
+               alt="Dr Joseph with ultrasound scanning equipment in a dairy barn" />
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 4 · FOR THE FARM -->
+  <section class="farm" id="farm" aria-labelledby="farm-title">
+    <div class="container section-head">
+      <p class="kicker" data-reveal style="--stagger:0">02 — For the farm</p>
+      <h2 id="farm-title" data-reveal style="--stagger:1">Your herd, in expert hands.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">Cattle, sheep and goats — medicine, reproduction and prevention, on your farm.</p>
     </div>
 
-    <div class="split">
-      <div class="prose">
-        <p>Farmavet Services was founded with a clear mission: to provide reliable, professional, and compassionate veterinary care for both farm animals and pets.</p>
-        <p>Led by <strong>Dr Joseph Abou Nasser</strong>, a Doctor of Veterinary Medicine specialized in production animals, our clinic brings together years of field experience — including work with major dairy farms, international organizations like the FAO, and advanced training in France. We understand the challenges farmers face and the importance of preventive care, productivity, and rapid response when it comes to herd health.</p>
-        <p>At the same time, we know how much your pets mean to you. That's why we also offer trusted pet care services, from vaccinations and medical treatment to proper nutrition and hygiene.</p>
+    <div class="container farm__split">
+      <div class="farm__stackcol" aria-hidden="true">
+        <div class="farm__sticky">
+          <div class="farm__frame">
+            <img data-beat-img="0" data-src="images/web/services-2-800.webp" alt="" style="object-position: 50% 30%" />
+            <img data-beat-img="1" data-src="images/web/services-1-800.webp" alt="" style="object-position: 50% 42%" />
+            <img data-beat-img="2" data-src="images/web/landscape-landscape-800.webp" alt="" />
+          </div>
+          <div class="farm__rail"><i></i><i></i><i></i></div>
+        </div>
+      </div>
 
-        <h3>What sets us apart</h3>
-        <ul class="feature-list">
-          <li>Expertise in large animal medicine and reproductive services</li>
-          <li>A fully equipped veterinary pharmacy with quality medicines and pet supplies</li>
-          <li>Personalized attention for both farm animals and companion animals</li>
-          <li>Commitment to animal welfare, biosecurity, and client satisfaction</li>
+      <div class="farm__beats">
+        <article class="beat" data-beat="0">
+          <figure class="beat__media">
+            <picture>
+              <source type="image/webp" srcset="images/web/services-2-800.webp" />
+              <img src="images/web/services-2-800.jpg" width="800" height="1422" loading="lazy" decoding="async" style="object-position: 50% 30%" alt="Dr Joseph giving a thumbs up beside a newborn calf" />
+            </picture>
+          </figure>
+          <p class="beat__num" aria-hidden="true">01</p>
+          <h3>Reproduction &amp; AI</h3>
+          <p>Fertility is the farm's engine. We keep it running with modern reproductive medicine, on site.</p>
+          <ul class="checklist">
+            <li>Ultrasound pregnancy diagnosis</li>
+            <li>Artificial insemination</li>
+            <li>Fertility programs &amp; reproductive hormones</li>
+          </ul>
+        </article>
+
+        <article class="beat" data-beat="1">
+          <figure class="beat__media">
+            <picture>
+              <source type="image/webp" srcset="images/web/services-1-800.webp" />
+              <img src="images/web/services-1-800.jpg" width="800" height="1422" loading="lazy" decoding="async" style="object-position: 50% 42%" alt="Dr Joseph with newborn twin calves and their mother in a straw-bedded barn" />
+            </picture>
+          </figure>
+          <p class="beat__num" aria-hidden="true">02</p>
+          <h3>New life, safely delivered.</h3>
+          <p>Calving assistance, obstetric emergencies and neonatal care — and on-site surgery when it can't wait.</p>
+          <ul class="checklist">
+            <li>Calving &amp; obstetric emergencies</li>
+            <li>Newborn calf care</li>
+            <li>On-site surgeries</li>
+          </ul>
+          <button class="gate" type="button">
+            <span class="gate__thumb">
+              <img src="images/web/gate-thumb-160.webp" width="160" height="160" loading="lazy" decoding="async" alt="" />
+            </span>
+            <span class="gate__label">Field surgery — tap to view</span>
+            <span class="sr-only">(graphic photo)</span>
+          </button>
+        </article>
+
+        <article class="beat" data-beat="2">
+          <figure class="beat__media">
+            <picture>
+              <source type="image/webp" srcset="images/web/landscape-landscape-800.webp" />
+              <img src="images/web/landscape-landscape-800.jpg" width="800" height="1066" loading="lazy" decoding="async" alt="Dr Joseph on a pasture visit, surrounded by the herd" />
+            </picture>
+          </figure>
+          <p class="beat__num" aria-hidden="true">03</p>
+          <h3>Herd health, on your farm.</h3>
+          <p>Prevention beats treatment. We build vaccination and prevention programs around your herd — and we come to you, with an emergency line for the moments that can't wait.</p>
+          <ul class="checklist">
+            <li>Livestock vaccination programs</li>
+            <li>Disease prevention &amp; mastitis control</li>
+            <li>On-farm consultations &amp; emergencies</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · FOR YOUR PET -->
+  <section class="pets" id="pets" aria-labelledby="pets-title">
+    <div class="container section-head">
+      <p class="kicker" data-reveal style="--stagger:0">03 — For your pet</p>
+      <h2 id="pets-title" data-reveal style="--stagger:1">Small patients, same standard.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">The rigor we bring to the barn, sized for your sofa — because your pets are family.</p>
+    </div>
+    <div class="container">
+      <figure class="pets__banner" data-reveal>
+        <picture>
+          <source type="image/webp" srcset="images/web/products-product2-800.webp 800w, images/web/products-product2-1600.webp 1600w" sizes="(min-width: 1360px) 1200px, 94vw" />
+          <img src="images/web/products-product2-1600.jpg"
+               srcset="images/web/products-product2-800.jpg 800w, images/web/products-product2-1600.jpg 1600w"
+               sizes="(min-width: 1360px) 1200px, 94vw"
+               width="1600" height="1200" loading="lazy" decoding="async"
+               alt="Wall of pet accessories in the Farmavet shop — leashes, harnesses, grooming tools and treats" />
+        </picture>
+      </figure>
+      <div class="pets__cards">
+        <article class="pcard" data-reveal style="--stagger:0">
+          <span class="pcard__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m18 3 3 3-2.5 2.5M14 7l3-3M5 21l-2-2 8.5-8.5M11 7l6 6-7 7-6-6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3>Vaccinations &amp; prevention</h3>
+          <p>Routine vaccines, deworming, and flea &amp; tick protection — on schedule.</p>
+        </article>
+        <article class="pcard" data-reveal style="--stagger:1">
+          <span class="pcard__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.8 4.8a4.5 4.5 0 0 1 6.4 0l.8.8.8-.8a4.5 4.5 0 1 1 6.4 6.4L12 18.4 4.8 11.2a4.5 4.5 0 0 1 0-6.4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+          <h3>Treatment &amp; checkups</h3>
+          <p>Medical care for common illnesses, from diagnosis through recovery.</p>
+        </article>
+        <article class="pcard" data-reveal style="--stagger:2">
+          <span class="pcard__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10h16l-1.5 9h-13zM8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h3>Nutrition — Josera®</h3>
+          <p>Premium food for every age and diet, plus supplements for joints, coat and digestion.</p>
+          <a class="pcard__link" href="https://shop.farmavetservices.com">Available in our shop →</a>
+        </article>
+        <article class="pcard" data-reveal style="--stagger:3">
+          <span class="pcard__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="6" cy="18" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.3 7.5 20 16M8.3 16.5 20 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <h3>Grooming &amp; hygiene</h3>
+          <p>Bathing, grooming and hygiene care that keeps them healthy — and happy about it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · THE PHARMACY -->
+  <section class="pharmacy" id="pharmacy" aria-labelledby="pharmacy-title">
+    <div class="container section-head">
+      <p class="kicker" data-reveal style="--stagger:0">04 — The pharmacy</p>
+      <h2 id="pharmacy-title" data-reveal style="--stagger:1">A licensed veterinary pharmacy, fully stocked.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">Medicines, vaccines, supplements and supplies — with a vet's advice on proper use and dosing.</p>
+    </div>
+
+    <div class="strip" data-reveal tabindex="0" role="group" aria-label="Photos of the pharmacy and shop">
+      <ul class="strip__track">
+        <li><img src="images/web/About-1-800.webp" width="800" height="1422" loading="lazy" decoding="async" alt="The Farmavet Services clinic storefront" /></li>
+        <li><img src="images/web/products-product7-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Shelves of veterinary medicines in the pharmacy" /></li>
+        <li><img src="images/web/products-product3-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Josera pet food display and pet accessories wall" /></li>
+        <li><img src="images/web/products-product1-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Pet collars and leashes on display" /></li>
+        <li><img src="images/web/products-product6-800.webp" width="800" height="1066" loading="lazy" decoding="async" alt="Shelves of pet accessories — bowls, brushes and toys" /></li>
+        <li><img src="images/web/products-product4-800.webp" width="800" height="600" loading="lazy" decoding="async" alt="Feeding bowls and travel water bottles" /></li>
+      </ul>
+    </div>
+    <p class="strip__caption container" data-reveal>Everything below is on our shelves — with a vet behind the counter.</p>
+
+    <div class="container stock" data-reveal>
+      <div class="stock__col">
+        <h3>For the farm</h3>
+        <ul class="checklist">
+          <li>Veterinary medicines — antibiotics, anti&#8209;inflammatories, reproductive hormones</li>
+          <li>Vaccines — clostridial, respiratory, enterotoxemia and more</li>
+          <li>Antiparasitics — injectable, oral and pour&#8209;on</li>
+          <li>Minerals &amp; vitamin supplements</li>
+          <li>Mastitis treatments &amp; udder care</li>
+          <li>AI &amp; reproductive tools — syringes, gloves, PGF2α, GnRH</li>
+          <li>Calf tonics &amp; oral rehydration salts</li>
         </ul>
       </div>
-
-      <div class="carousel">
-        <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevAbout()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="carousel__viewport"><img id="about-image" src="images/About/1.jpeg" alt="Farmavet Services in the field" /></div>
-        <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextAbout()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SERVICES -->
-<section id="services" class="section section--alt">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Our services</span>
-      <h2>Expert care for livestock and pets</h2>
-      <p>Professional veterinary expertise with personalized attention — whether you're a farmer, breeder, or pet owner.</p>
-    </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <div class="card__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13C4 8 8 4 13 4a7 7 0 0 1 7 7c0 5-4 9-9 9z"/><path d="M11 20c0-4 2-7 5-9"/></svg>
-        </div>
-        <h3>Production Animal Services</h3>
-        <p class="muted" style="color:var(--muted);margin-bottom:14px;">Large animal medicine for cattle, sheep and goats.</p>
-        <ul class="feature-list">
-          <li>Disease prevention and treatment</li>
-          <li>Reproductive services (artificial insemination, pregnancy diagnosis, etc.)</li>
-          <li>On-site surgeries</li>
-          <li>On-farm consultations</li>
-          <li>Livestock vaccination programs</li>
-          <li>A fully stocked veterinary pharmacy</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="card__icon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="11" r="2"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="18" cy="11" r="2"/><path d="M12 12.5c-3 0-5 2.3-5 4.7 0 1.7 1.4 2.3 3 2.3 1 0 1.5-.4 2-.4s1 .4 2 .4c1.6 0 3-.6 3-2.3 0-2.4-2-4.7-5-4.7z"/></svg>
-        </div>
-        <h3>Pet Care Services</h3>
-        <p class="muted" style="color:var(--muted);margin-bottom:14px;">Your pets are family, and they deserve the best care.</p>
-        <ul class="feature-list">
-          <li>Routine vaccinations and checkups</li>
-          <li>Medical treatment for common illnesses</li>
-          <li>Quality pet food and supplements</li>
-          <li>Pet hygiene services including bathing and grooming</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="carousel" style="margin-top:32px;">
-      <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevService()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="carousel__viewport"><img id="service-image" src="images/services/1.jpeg" alt="Our veterinary services" /></div>
-      <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextService()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- PRODUCTS -->
-<section id="products" class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Our products</span>
-      <h2>Trusted brands for livestock &amp; pets</h2>
-      <p>A wide range of high-quality veterinary products to ensure the health, productivity, and well-being of your animals — with expert guidance.</p>
-    </div>
-
-    <div class="card-grid">
-      <div class="card">
-        <div class="card__icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 0 1 7-7l7 7a5 5 0 0 1-7 7z"/><path d="m8.5 8.5 7 7"/></svg>
-        </div>
-        <h3>Livestock Products</h3>
-        <ul class="feature-list">
-          <li>Veterinary medicines (antibiotics, anti-inflammatories, reproductive hormones)</li>
-          <li>Vaccines (clostridial, respiratory, enterotoxemia, etc.)</li>
-          <li>Antiparasitics (injectable, oral, pour-on)</li>
-          <li>Minerals and vitamin supplements</li>
-          <li>Mastitis treatments and udder care products</li>
-          <li>AI and reproductive tools (syringes, gloves, PGF2α, GnRH, etc.)</li>
-          <li>Calf tonics and oral rehydration salts</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <div class="card__icon">
-          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="11" r="2"/><circle cx="10" cy="7" r="2"/><circle cx="14" cy="7" r="2"/><circle cx="18" cy="11" r="2"/><path d="M12 12.5c-3 0-5 2.3-5 4.7 0 1.7 1.4 2.3 3 2.3 1 0 1.5-.4 2-.4s1 .4 2 .4c1.6 0 3-.6 3-2.3 0-2.4-2-4.7-5-4.7z"/></svg>
-        </div>
-        <h3>Pet Products</h3>
-        <ul class="feature-list">
-          <li>Vaccines and preventive care (anti-flea, tick, and deworming)</li>
+      <div class="stock__col">
+        <h3>For your pet</h3>
+        <ul class="checklist">
+          <li>Vaccines &amp; preventive care — flea, tick and deworming</li>
           <li>Prescription medications for common illnesses</li>
-          <li>Nutritional supplements for joints, coat, and digestion</li>
-          <li>Josera® premium pet food (puppy, adult, senior, special diets)</li>
-          <li>Shampoos and hygiene products</li>
-          <li>Basic accessories (bowls, leashes, collars, brushes)</li>
+          <li>Supplements for joints, coat and digestion</li>
+          <li>Josera® premium food — puppy, adult, senior, special diets</li>
+          <li>Shampoos &amp; hygiene products</li>
+          <li>Accessories — bowls, leashes, collars, brushes</li>
         </ul>
       </div>
     </div>
 
-    <p class="lead" style="margin-top:26px;">All products are available at our licensed veterinary pharmacy, with veterinary advice on proper use and dosing.</p>
-    <div style="text-align:center;">
-      <a href="https://shop.farmavetservices.com" class="btn btn--lg">Browse the online shop</a>
+    <div class="container">
+      <div class="mega" data-reveal>
+        <img class="mega__mark" src="images/web/logo-320.png" alt="" width="320" height="320" loading="lazy" decoding="async" data-parallax="0.08" />
+        <h2>Everything in the pharmacy, delivered to your door.</h2>
+        <p>Order online — pay cash on delivery.</p>
+        <a class="pill pill--amber pill--xl" href="https://shop.farmavetservices.com">Shop at shop.farmavetservices.com →</a>
+        <p class="mega__alt">Or call to order: <a href="tel:+9614272070">04 27 20 70</a></p>
+        <ul class="mega__chips" role="list">
+          <li>Cash on delivery</li>
+          <li>Licensed pharmacy</li>
+          <li>Vet advice included</li>
+        </ul>
+      </div>
     </div>
+  </section>
 
-    <div class="carousel" style="margin-top:32px;">
-      <button class="carousel__btn carousel__btn--prev" aria-label="Previous image" onclick="prevProduct()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div class="carousel__viewport"><img id="product-image" src="images/products/product1.jpeg" alt="Our veterinary products" /></div>
-      <button class="carousel__btn carousel__btn--next" aria-label="Next image" onclick="nextProduct()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+  <!-- 7 · ON THE RECORD -->
+  <section class="trusted" id="trusted" aria-labelledby="trusted-title">
+    <div class="container section-head">
+      <p class="kicker" data-reveal style="--stagger:0">05 — On the record</p>
+      <h2 id="trusted-title" data-reveal style="--stagger:1">As featured on OTV Lebanon.</h2>
+    </div>
+    <div class="container trusted__grid">
+      <figure data-reveal style="--stagger:0">
+        <picture>
+          <source type="image/webp" srcset="images/web/About-2-800.webp" />
+          <img src="images/web/About-2-800.jpg" width="800" height="448" loading="lazy" decoding="async" alt="Dr Joseph Abou Nasser interviewed on OTV Lebanon" />
+        </picture>
+        <figcaption>Dr Joseph on OTV's Al Aawafi</figcaption>
+      </figure>
+      <figure data-reveal style="--stagger:1">
+        <picture>
+          <source type="image/webp" srcset="images/web/About-3-800.webp" />
+          <img src="images/web/About-3-800.jpg" width="800" height="448" loading="lazy" decoding="async" alt="Dr Joseph speaking about animal health on national television" />
+        </picture>
+        <figcaption>Talking animal health on national TV</figcaption>
+      </figure>
+      <figure data-reveal style="--stagger:2">
+        <picture>
+          <source type="image/webp" srcset="images/web/About-1-800.webp" />
+          <img src="images/web/About-1-800.jpg" width="800" height="1422" loading="lazy" decoding="async" alt="The Farmavet Services clinic and pharmacy storefront" />
+        </picture>
+        <figcaption>Visit the clinic &amp; pharmacy</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 8 · CONTACT -->
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="container section-head">
+      <p class="kicker" data-reveal style="--stagger:0">06 — Talk to us</p>
+      <h2 id="contact-title" data-reveal style="--stagger:1">We're here when you need us.</h2>
+      <p class="section-sub" data-reveal style="--stagger:2">For appointments, on-farm service, orders — or emergencies.</p>
+    </div>
+    <div class="container contact__grid">
+      <a class="tile tile--amber" href="tel:+9613102121" data-reveal style="--stagger:0">
+        <span class="tile__label"><i class="tile__dot" aria-hidden="true"></i>Emergency line</span>
+        <span class="tile__value">03 10 21 21</span>
+        <span class="tile__hint">Tap to call</span>
+      </a>
+      <a class="tile" href="tel:+9614272070" data-reveal style="--stagger:1">
+        <span class="tile__label">Orders &amp; clinic</span>
+        <span class="tile__value">04 27 20 70</span>
+        <span class="tile__hint">Clinic &amp; pharmacy orders</span>
+      </a>
+      <a class="tile" href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener noreferrer" data-reveal style="--stagger:2">
+        <span class="tile__label">Find us</span>
+        <span class="tile__value tile__value--sm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>Google Maps</span>
+        <span class="tile__hint">Open directions →</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <img src="images/web/logo-96.png" alt="" width="44" height="44" />
+      <p>Farm medicine, pet care and a licensed veterinary pharmacy — Lebanon.</p>
+    </div>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="#doctor">The doctor</a>
+      <a href="#farm">For the farm</a>
+      <a href="#pets">For your pet</a>
+      <a href="#pharmacy">The pharmacy</a>
+      <a href="https://shop.farmavetservices.com">Online shop</a>
+    </nav>
+    <div class="footer__contact">
+      <a href="tel:+9614272070">Orders: 04 27 20 70</a>
+      <a href="tel:+9613102121">Emergencies: 03 10 21 21</a>
+      <a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener noreferrer">Google Maps</a>
     </div>
   </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact" class="section section--alt">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow">Get in touch</span>
-      <h2>Contact us</h2>
-      <p>We're here to help — for appointments, on-farm service, or emergencies.</p>
-    </div>
-
-    <div class="contact-grid">
-      <div class="card">
-        <div class="contact-list">
-          <div class="contact-row">
-            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-            <div><div class="label">Phone</div><div class="value"><a href="tel:042720 70">04 27 20 70</a></div></div>
-          </div>
-          <div class="contact-row">
-            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.42 0z"/></svg></span>
-            <div><div class="label">Emergencies</div><div class="value"><a href="tel:0310 21 21">03 10 21 21</a></div></div>
-          </div>
-          <div class="contact-row">
-            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg></span>
-            <div><div class="label">Location</div><div class="value"><a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener noreferrer">Find us on Google Maps</a></div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="contact-cta">
-        <h3>Shop online, pay on delivery</h3>
-        <p>Order veterinary medicines, supplements and farm supplies from our online store — delivered to your door with cash on delivery.</p>
-        <a href="https://shop.farmavetservices.com" class="btn btn--accent btn--lg" style="align-self:flex-start;">Go to the shop</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <div class="footer-brand">
-          <img src="images/logo/farmavet.png" alt="Farmavet Services" />
-          <strong>Farmavet Services</strong>
-        </div>
-        <p>Trusted veterinary care for farm animals and pets, with a fully stocked veterinary pharmacy — rooted in science, driven by compassion.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Explore</h4>
-        <a href="#about">About us</a>
-        <a href="#services">Services</a>
-        <a href="#products">Products</a>
-        <a href="https://shop.farmavetservices.com">Online shop</a>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <a href="tel:042720 70"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Orders: 04 27 20 70</a>
-        <a href="tel:0310 21 21"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.42 0z"/></svg>Emergencies: 03 10 21 21</a>
-        <a href="https://maps.app.goo.gl/7kD2eqh7NnybWz4d9?g_st=com.google.maps.preview.copy" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11.8A8 8 0 0 0 4 10.2C4 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>Google Maps</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="container">© 2026 Farmavet Services. All rights reserved.</div>
-  </div>
+  <p class="footer__legal container">© 2026 Farmavet Services. All rights reserved.</p>
 </footer>
 
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 </body>
 </html>
