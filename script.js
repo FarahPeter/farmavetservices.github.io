@@ -138,25 +138,33 @@
     k.appendChild(inner);
   });
 
-  /* ---------- Heading word cascade (split once, before the reveal IO) ---------- */
+  /* ---------- Heading word cascade (split once, before the reveal IO) ----------
+     The real text stays in the a11y tree as an sr-only TEXT NODE (an
+     aria-label would be skipped by page-translation tools); the animated
+     copy is one aria-hidden container. */
   if (!reduce.matches) {
     d.querySelectorAll('.section-head h2[data-reveal], .doctor__text h2[data-reveal]').forEach(function (h) {
       var text = h.textContent;
-      h.setAttribute('aria-label', text);
-      h.textContent = '';
+      var sr = d.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = text;
+      var vis = d.createElement('span');
+      vis.setAttribute('aria-hidden', 'true');
       // split on plain spaces only — the &nbsp; in "Abou Nasser" stays one token
       text.split(' ').forEach(function (word, i) {
-        if (i) h.appendChild(d.createTextNode(' '));
+        if (i) vis.appendChild(d.createTextNode(' '));
         var outer = d.createElement('span');
         outer.className = 'w';
-        outer.setAttribute('aria-hidden', 'true');
         outer.style.setProperty('--w', i);
         var inner = d.createElement('span');
         inner.className = 'w__in';
         inner.textContent = word;
         outer.appendChild(inner);
-        h.appendChild(outer);
+        vis.appendChild(outer);
       });
+      h.textContent = '';
+      h.appendChild(sr);
+      h.appendChild(vis);
     });
   }
 
@@ -189,23 +197,26 @@
   }
   measureHero();
 
-  requestAnimationFrame(function () {
-    requestAnimationFrame(function () { hero.classList.add('loaded'); });
-  });
-
   // the dolly scrub may only write transforms once the load unveil has
   // finished, otherwise its transition would ease every scroll frame
+  var settleHero = function () {
+    if (heroSettled) return;
+    heroSettled = true;
+    if (heroMedia) heroMedia.classList.add('settled');
+  };
   if (heroMedia) {
-    var settleHero = function () {
-      if (heroSettled) return;
-      heroSettled = true;
-      heroMedia.classList.add('settled');
-    };
     heroMedia.addEventListener('transitionend', function (e) {
       if (e.target === heroMedia) settleHero();
     });
-    setTimeout(settleHero, 1600);
   }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      hero.classList.add('loaded');
+      // armed here, not at parse time: rAF pauses in background tabs and
+      // the fallback must never win the race against the unveil itself
+      setTimeout(settleHero, 1600);
+    });
+  });
 
   function clearHeroScrub() {
     if (heroCopy) { heroCopy.style.transform = ''; heroCopy.style.opacity = ''; }
@@ -230,6 +241,7 @@
   var farm = d.querySelector('.farm');
   var beats = Array.prototype.slice.call(d.querySelectorAll('.beat'));
   var stackImgs = Array.prototype.slice.call(d.querySelectorAll('[data-beat-img]'));
+  var wipes = Array.prototype.slice.call(d.querySelectorAll('.farm__wipe'));
   var railDots = Array.prototype.slice.call(d.querySelectorAll('.farm__rail i'));
   var beatsIO = null;
   var stackLoaded = false;
@@ -251,7 +263,8 @@
     if (!scrubOn) return;
     scrubOn = false;
     if (farm) farm.classList.remove('farm--scrub');
-    stackImgs.forEach(function (img) { img.style.clipPath = ''; img.style.transform = ''; });
+    stackImgs.forEach(function (img) { img.style.transform = ''; });
+    wipes.forEach(function (w) { w.style.transform = ''; });
     railDots.forEach(function (dot) { dot.style.removeProperty('--beatp'); });
   }
 
@@ -316,7 +329,7 @@
       el.classList.add('magnet-live');
     });
     el.addEventListener('pointermove', function (e) {
-      if (!rect) return;
+      if (!rect || !pointerFine()) return;
       mx = Math.max(-6, Math.min(6, (e.clientX - rect.left - rect.width / 2) * 0.18));
       my = Math.max(-6, Math.min(6, (e.clientY - rect.top - rect.height / 2) * 0.18));
       if (!mTick) {
@@ -349,6 +362,8 @@
   var mega = d.querySelector('.mega');
   var megaTorch = mega ? mega.querySelector('.mega__torch') : null;
   var megaRect = null;
+  var megaScrollY = 0;          // rects are viewport-relative: wheel-scrolling
+                                // mid-hover must not leave the torch offset
   var megaTX = 0, megaTY = 0;   // cursor target, normalized ±1
   var megaPX = 0, megaPY = 0;   // lerped position consumed by the rAF loop
   var torchX = 0, torchY = 0;
@@ -385,13 +400,15 @@
     mega.addEventListener('pointerenter', function (e) {
       if (!pointerFine() || e.pointerType === 'touch') return;
       megaRect = mega.getBoundingClientRect();
+      megaScrollY = window.pageYOffset;
       megaTorch.classList.add('lit');
       moveTorch(e.clientX - megaRect.left, e.clientY - megaRect.top);
     });
     mega.addEventListener('pointermove', function (e) {
-      if (!megaRect) return;
+      if (!megaRect || !pointerFine()) return;
+      var top = megaRect.top - (window.pageYOffset - megaScrollY);
       var x = e.clientX - megaRect.left;
-      var y = e.clientY - megaRect.top;
+      var y = e.clientY - top;
       megaTX = Math.max(-1, Math.min(1, (x / megaRect.width) * 2 - 1));
       megaTY = Math.max(-1, Math.min(1, (y / megaRect.height) * 2 - 1));
       moveTorch(x, y);
@@ -408,16 +425,19 @@
   /* ---------- Contact tiles: cursor-tracking border glow ---------- */
   d.querySelectorAll('.contact__grid .tile').forEach(function (tile) {
     var rect = null;
+    var sy = 0;
     var tick = false;
     var gx = 50, gy = 50;
     tile.addEventListener('pointerenter', function (e) {
       if (!pointerFine() || e.pointerType === 'touch') return;
       rect = tile.getBoundingClientRect();
+      sy = window.pageYOffset;
     });
     tile.addEventListener('pointermove', function (e) {
-      if (!rect) return;
+      if (!rect || !pointerFine()) return;
+      var top = rect.top - (window.pageYOffset - sy);
       gx = clamp01((e.clientX - rect.left) / rect.width) * 100;
-      gy = clamp01((e.clientY - rect.top) / rect.height) * 100;
+      gy = clamp01((e.clientY - top) / rect.height) * 100;
       if (!tick) {
         tick = true;
         requestAnimationFrame(function () {
@@ -465,6 +485,14 @@
   }
   syncCurtain();
   onMQ(desktop, syncCurtain);
+  // keyboard escape hatch: in curtain mode the footer sits behind main, so
+  // focus landing on its links must bring the page to the bottom where the
+  // footer is fully revealed (fixed elements never scroll into view)
+  if (footerEl) {
+    footerEl.addEventListener('focusin', function () {
+      if (curtain) window.scrollTo(0, root.scrollHeight);
+    });
+  }
 
   /* ---------- Scroll cue ---------- */
   var cue = d.querySelector('.hero__cue');
@@ -507,10 +535,13 @@
     var sRect = motion && strip && strip.classList.contains('drift') ? strip.getBoundingClientRect() : null;
     var sOverflow = sRect ? stripTrack.scrollWidth - strip.clientWidth : 0;
     var beatRects = null;
+    var farmAway = false;
     if (motion && beatsIO && stackLoaded && farm) {
       var fRect = farm.getBoundingClientRect();
       if (fRect.bottom > -40 && fRect.top < vh + 40) {
         beatRects = beats.map(function (b) { return b.getBoundingClientRect(); });
+      } else {
+        farmAway = true;
       }
     }
 
@@ -567,7 +598,8 @@
       p.el.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0)';
     });
 
-    // farm shutter-wipe scrub: later siblings wipe in over the settled shot
+    // farm shutter-wipe scrub: each wipe wrapper slides up while its image
+    // counter-slides, revealing over the settled shot (transform-only)
     if (beatRects) {
       if (!scrubOn) {
         scrubOn = true;
@@ -576,12 +608,15 @@
       var t = beatRects.map(function (r) {
         return easeInOut(clamp01((vh * 0.75 - r.top) / (vh * 0.55)));
       });
-      if (stackImgs[1]) {
-        stackImgs[1].style.clipPath = 'inset(' + ((1 - t[1]) * 100).toFixed(2) + '% 0 0 0)';
-        stackImgs[1].style.transform = 'scale(' + (1 + (t[2] || 0) * 0.06).toFixed(4) + ') translate3d(0,' + (-(t[2] || 0) * 2).toFixed(2) + '%,0)';
+      var w1 = ((1 - t[1]) * 100).toFixed(2);
+      var w2 = ((1 - t[2]) * 100).toFixed(2);
+      if (wipes[0] && stackImgs[1]) {
+        wipes[0].style.transform = 'translate3d(0,' + w1 + '%,0)';
+        stackImgs[1].style.transform = 'translate3d(0,-' + w1 + '%,0) scale(' + (1 + t[2] * 0.06).toFixed(4) + ')';
       }
-      if (stackImgs[2]) {
-        stackImgs[2].style.clipPath = 'inset(' + ((1 - t[2]) * 100).toFixed(2) + '% 0 0 0)';
+      if (wipes[1] && stackImgs[2]) {
+        wipes[1].style.transform = 'translate3d(0,' + w2 + '%,0)';
+        stackImgs[2].style.transform = 'translate3d(0,-' + w2 + '%,0)';
       }
       if (stackImgs[0]) {
         stackImgs[0].style.transform = 'scale(' + (1 + t[1] * 0.06).toFixed(4) + ') translate3d(0,' + (-t[1] * 2).toFixed(2) + '%,0)';
@@ -589,6 +624,10 @@
       railDots.forEach(function (dot, k) {
         dot.style.setProperty('--beatp', t[k].toFixed(3));
       });
+    } else if (farmAway && scrubOn) {
+      // section fully offscreen: release the promoted layers; the class
+      // swap happens out of sight and re-engages on re-entry
+      disableScrub();
     }
 
     if (sRect && sRect.bottom > 0 && sRect.top < vh && sOverflow > 0) {

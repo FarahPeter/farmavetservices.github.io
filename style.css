@@ -129,10 +129,11 @@ h3 { font-size: var(--fs-h3); line-height: 1.2; }
   font-family: var(--font-head); font-weight: 600; font-size: .95rem;
   padding: 11px 22px; border-radius: var(--r-pill);
   border: 1.5px solid transparent; white-space: nowrap;
-  transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + var(--lift, 0px)), 0) scale(var(--pz, 1));
+  /* 2D translate: composes the same but doesn't force a layer at rest */
+  transform: translate(var(--mx, 0px), calc(var(--my, 0px) + var(--lift, 0px))) scale(var(--pz, 1));
   transition: transform .3s var(--ease-out), box-shadow .25s var(--ease-out), background .25s var(--ease-soft);
 }
-.pill svg { width: 15px; height: 15px; transform: translate3d(calc(var(--mx, 0px) * .5), calc(var(--my, 0px) * .5), 0); }
+.pill svg { width: 15px; height: 15px; transform: translate(calc(var(--mx, 0px) * .5), calc(var(--my, 0px) * .5)); }
 .pill--amber { background: var(--amber-500); color: var(--ink); }
 .pill--ghost { border-color: var(--line); color: var(--ink); background: transparent; }
 .pill--lg { padding: 15px 30px; font-size: 1.02rem; }
@@ -601,11 +602,14 @@ html:not(.js) .print { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg))
 /* headings move word-by-word, not as a block (their opacity fade stays) */
 .js .section-head h2[data-reveal], .js .doctor__text h2[data-reveal] { transform: none; }
 
-/* -- Farm: scrubbed shutter-wipe stack + rail progress pills -- */
+/* -- Farm: scrubbed shutter-wipe stack + rail progress pills --
+   the wipe is a wrapper/counter-translate pair (transform-only, no
+   per-frame clip-path repaints); layers are released offscreen by JS */
+.farm__wipe { position: absolute; inset: 0; }
 @media (min-width: 1024px) {
-  .farm--scrub .farm__frame img { opacity: 1; transform: none; transition: none; will-change: clip-path, transform; }
-  .farm--scrub .farm__frame img[data-beat-img="1"],
-  .farm--scrub .farm__frame img[data-beat-img="2"] { clip-path: inset(100% 0 0 0); }
+  .farm--scrub .farm__frame img { opacity: 1; transform: none; transition: none; will-change: transform; }
+  .farm--scrub .farm__wipe { overflow: hidden; transform: translate3d(0, 100%, 0); will-change: transform; }
+  .farm--scrub .farm__wipe img { transform: translate3d(0, -100%, 0); }
   .farm--scrub .farm__rail i {
     position: relative; overflow: hidden; background: var(--fog); transform: none;
     transition: height .35s var(--ease-out), border-radius .35s var(--ease-out);
@@ -646,16 +650,23 @@ html:not(.js) .print { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg))
   background: radial-gradient(closest-side, rgba(250, 246, 236, .1), rgba(217, 150, 42, .05) 45%, transparent 70%);
   transform: translate3d(-350px, -350px, 0);
   opacity: 0; transition: opacity .45s var(--ease-soft);
-  pointer-events: none; will-change: transform;
+  pointer-events: none;
 }
-.mega__torch.lit { opacity: 1; }
+.mega__torch.lit { opacity: 1; will-change: transform; }
+/* the torch can never light on these devices — don't pay for its layer */
+@media (hover: none), (pointer: coarse) {
+  .mega__torch { display: none; }
+}
 .mega > :not(.mega__mark):not(.mega__torch) { position: relative; z-index: 1; }
 
 /* -- Trusted: OTV letterbox reveal --
    the slit stays >= 24% of the box: the element's own clip-path shrinks
    its IO intersection area, and the reveal threshold is .15 */
 .js .trusted__grid figure[data-reveal] { clip-path: inset(38% -24px 38% -24px round 14px); }
-.js .trusted__grid figure[data-reveal] img { transform: scale(1.08); will-change: transform; }
+.js .trusted__grid figure[data-reveal] img { transform: scale(1.08); }
+/* promote only until the one-shot reveal fires; the running transition
+   keeps the layer alive for its own duration */
+.js .trusted__grid figure[data-reveal]:not(.in) img { will-change: transform; }
 .js .trusted__grid figure[data-reveal] figcaption { opacity: 0; }
 .js .trusted__grid figure[data-reveal].in {
   /* ends past the box so the shadow is never clipped at rest */
