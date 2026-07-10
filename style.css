@@ -122,24 +122,29 @@ h3 { font-size: var(--fs-h3); line-height: 1.2; }
 .section-sub { color: var(--ink-soft); font-size: var(--fs-body-lg); margin-top: 14px; max-width: 52ch; margin-inline: auto; }
 
 /* ---------- Pills ---------- */
+/* transform composes from vars so hover lift, press and the JS magnet
+   never fight over the property */
 .pill {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   font-family: var(--font-head); font-weight: 600; font-size: .95rem;
   padding: 11px 22px; border-radius: var(--r-pill);
   border: 1.5px solid transparent; white-space: nowrap;
-  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out), background .25s var(--ease-soft);
+  transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + var(--lift, 0px)), 0) scale(var(--pz, 1));
+  transition: transform .3s var(--ease-out), box-shadow .25s var(--ease-out), background .25s var(--ease-soft);
 }
-.pill svg { width: 15px; height: 15px; }
+.pill svg { width: 15px; height: 15px; transform: translate3d(calc(var(--mx, 0px) * .5), calc(var(--my, 0px) * .5), 0); }
 .pill--amber { background: var(--amber-500); color: var(--ink); }
 .pill--ghost { border-color: var(--line); color: var(--ink); background: transparent; }
 .pill--lg { padding: 15px 30px; font-size: 1.02rem; }
 .pill--xl { padding: 18px 34px; font-size: clamp(1rem, .9rem + .5vw, 1.15rem); white-space: normal; text-align: center; }
 @media (hover: hover) {
-  .pill:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+  .pill:hover { --lift: -2px; box-shadow: var(--shadow-card); }
   .pill--amber:hover { background: #e2a13b; }
   .pill--ghost:hover { background: rgba(30, 43, 34, .05); }
 }
-.pill:active { transform: translateY(0) scale(.98); }
+.pill:active { --pz: .98; }
+/* while the pointer steers a magnetic pill, transform must not be eased */
+.pill.magnet-live { transition: box-shadow .25s var(--ease-out), background .25s var(--ease-soft); }
 
 /* ---------- Navigation ---------- */
 .nav {
@@ -251,7 +256,7 @@ h3 { font-size: var(--fs-h3); line-height: 1.2; }
 @keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
 
 /* ---------- Manifesto ---------- */
-.manifesto { background: var(--white); padding: clamp(120px, 18vh, 200px) 0; }
+.manifesto { background: var(--white); padding: clamp(120px, 18vh, 200px) 0; position: relative; }
 .manifesto p {
   max-width: 900px; text-align: center;
   font-family: var(--font-head); font-weight: 600;
@@ -517,6 +522,180 @@ html:not(.js) .manifesto span { color: var(--ink); }
   transition-delay: calc(var(--stagger, 0) * 85ms);
 }
 
+/* =====================================================================
+   Scrollytelling v2 — layered motion & pointer systems
+   Ordered hero → footer. Hidden start-states are .js-gated; every
+   effect's reduced-motion override lives in the block at file end.
+   ===================================================================== */
+
+/* -- Hero: masked line rise + brand color settle -- */
+.hero__line { overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
+.hero__line-inner { display: inline-block; }
+.js .hero__line.hero__load { transform: none; }
+.js .hero__line-inner { transform: translateY(112%) rotate(2deg); transform-origin: left bottom; }
+.hero.loaded .hero__line-inner {
+  transform: none;
+  transition: transform .9s var(--ease-out);
+  transition-delay: calc(var(--i) * 110ms);
+}
+.js .hero h1 em { color: var(--ink); }
+.hero.loaded h1 em { color: var(--green-700); transition: color .6s var(--ease-soft) calc(var(--i) * 110ms + .7s); }
+
+/* -- Hero: exit dolly scrub (transforms written by the rAF loop) -- */
+.hero__media.settled { transition: none; }
+
+/* -- Nav: morphing hover pill (span injected by JS on capable setups) -- */
+.nav__links { position: relative; }
+.nav__glide {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 0;
+  background: rgba(30, 43, 34, .06); border-radius: var(--r-pill);
+  opacity: 0; pointer-events: none;
+  transition: transform .35s var(--ease-out), width .35s var(--ease-out), opacity .25s var(--ease-soft);
+}
+/* first show: appear in place instead of sliding in from x=0 */
+.nav__glide.snap { transition: opacity .25s var(--ease-soft); }
+.nav--glide .nav__links a:hover { background: transparent; }
+
+/* -- Manifesto: per-word focus pull + underline finale + print trail -- */
+.js .manifesto span {
+  display: inline-block; filter: blur(1.5px); transform: translateY(.12em);
+  transition: color .25s linear, filter .35s var(--ease-out), transform .35s var(--ease-out);
+}
+.js .manifesto span.ink { filter: none; transform: none; }
+.manifesto span:last-child { position: relative; }
+.manifesto span:last-child::after {
+  content: ""; position: absolute; left: 0; right: .15em; bottom: -6px; height: 3px;
+  background: var(--amber-500); transform: scaleX(0); transform-origin: left center;
+  transition: transform .5s var(--ease-out) .25s;
+}
+.manifesto span:last-child.ink::after { transform: scaleX(1); }
+html:not(.js) .manifesto span:last-child::after { transform: scaleX(1); }
+.manifesto p { position: relative; z-index: 1; }
+.manifesto__trail { position: absolute; inset: 0; pointer-events: none; }
+.print {
+  position: absolute; width: 34px; height: 34px;
+  fill: var(--ink); opacity: 0; transform: scale(.6) rotate(var(--pr, 0deg));
+  transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+}
+.print.on { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg)); }
+html:not(.js) .print { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg)); }
+@media (max-width: 759px) {
+  .print:not(.print--m) { display: none; }
+}
+
+/* -- Chapter typography: kicker print-wipe + heading word cascade -- */
+.js .kicker[data-reveal] { opacity: 1; transform: none; }
+.kicker__in { display: inline-block; }
+.js .kicker[data-reveal] .kicker__in { clip-path: inset(0 100% 0 0); }
+.js .kicker[data-reveal].in .kicker__in {
+  clip-path: inset(0 -2% 0 0);
+  transition: clip-path .8s var(--ease-out) calc(var(--stagger, 0) * 85ms);
+}
+.w { display: inline-block; overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; vertical-align: top; }
+.w__in { display: inline-block; transform: translateY(110%); }
+[data-reveal].in .w__in {
+  transform: none;
+  transition: transform .7s var(--ease-out);
+  transition-delay: calc(var(--stagger, 0) * 85ms + var(--w, 0) * 55ms);
+}
+/* headings move word-by-word, not as a block (their opacity fade stays) */
+.js .section-head h2[data-reveal], .js .doctor__text h2[data-reveal] { transform: none; }
+
+/* -- Farm: scrubbed shutter-wipe stack + rail progress pills -- */
+@media (min-width: 1024px) {
+  .farm--scrub .farm__frame img { opacity: 1; transform: none; transition: none; will-change: clip-path, transform; }
+  .farm--scrub .farm__frame img[data-beat-img="1"],
+  .farm--scrub .farm__frame img[data-beat-img="2"] { clip-path: inset(100% 0 0 0); }
+  .farm--scrub .farm__rail i {
+    position: relative; overflow: hidden; background: var(--fog); transform: none;
+    transition: height .35s var(--ease-out), border-radius .35s var(--ease-out);
+  }
+  .farm--scrub .farm__rail i::after {
+    content: ""; position: absolute; inset: 0; background: var(--amber-500);
+    transform: scaleY(var(--beatp, 0)); transform-origin: top center;
+  }
+  .farm--scrub .farm__rail i.on { height: 26px; border-radius: 5px; }
+}
+
+/* -- Pets & contact: self-drawing line icons --
+   paths only: pathLength on circles needs Safari 16.4+, and a fallback
+   there would read as dotted strokes */
+.js .pcard[data-reveal] .pcard__icon path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .pcard[data-reveal].in .pcard__icon path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset .9s var(--ease-out) calc(var(--stagger, 0) * 85ms + .25s);
+}
+.js .pcard[data-reveal].in .pcard__icon path:nth-child(2) { transition-delay: calc(var(--stagger, 0) * 85ms + .4s); }
+.js .pcard[data-reveal].in .pcard__icon path:nth-child(3) { transition-delay: calc(var(--stagger, 0) * 85ms + .55s); }
+.js .tile[data-reveal] .tile__value--sm path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.js .tile[data-reveal].in .tile__value--sm path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset .9s var(--ease-out) calc(var(--stagger, 0) * 85ms + .3s);
+}
+
+/* -- Pharmacy strip: hover focus choreography -- */
+@media (hover: hover) and (pointer: fine) {
+  .strip__track img { transition: opacity .35s var(--ease-soft), transform .35s var(--ease-out), box-shadow .35s var(--ease-soft); }
+  .strip__track:hover li:not(:hover) img { opacity: .6; transform: scale(.985); }
+  .strip__track li:hover img { transform: scale(1.025); box-shadow: var(--shadow-float); }
+}
+
+/* -- Mega card: torchlight that follows the cursor -- */
+.mega__torch {
+  position: absolute; top: 0; left: 0; width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(250, 246, 236, .1), rgba(217, 150, 42, .05) 45%, transparent 70%);
+  transform: translate3d(-350px, -350px, 0);
+  opacity: 0; transition: opacity .45s var(--ease-soft);
+  pointer-events: none; will-change: transform;
+}
+.mega__torch.lit { opacity: 1; }
+.mega > :not(.mega__mark):not(.mega__torch) { position: relative; z-index: 1; }
+
+/* -- Trusted: OTV letterbox reveal --
+   the slit stays >= 24% of the box: the element's own clip-path shrinks
+   its IO intersection area, and the reveal threshold is .15 */
+.js .trusted__grid figure[data-reveal] { clip-path: inset(38% -24px 38% -24px round 14px); }
+.js .trusted__grid figure[data-reveal] img { transform: scale(1.08); will-change: transform; }
+.js .trusted__grid figure[data-reveal] figcaption { opacity: 0; }
+.js .trusted__grid figure[data-reveal].in {
+  /* ends past the box so the shadow is never clipped at rest */
+  clip-path: inset(-48px -24px -48px -24px round 14px);
+  transition: opacity .65s var(--ease-out) calc(var(--stagger, 0) * 85ms),
+              transform .65s var(--ease-out) calc(var(--stagger, 0) * 85ms),
+              clip-path .8s var(--ease-out) calc(var(--stagger, 0) * 85ms);
+}
+.js .trusted__grid figure[data-reveal].in img {
+  transform: none;
+  transition: transform 1.1s var(--ease-out) calc(var(--stagger, 0) * 85ms);
+}
+.js .trusted__grid figure[data-reveal].in figcaption {
+  opacity: 1;
+  transition: opacity .5s var(--ease-soft) calc(var(--stagger, 0) * 85ms + .35s);
+}
+
+/* -- Contact: cursor-tracking border glow -- */
+.tile { position: relative; }
+.tile::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px;
+  background: radial-gradient(160px circle at var(--gx, 50%) var(--gy, 50%), var(--glow, rgba(217, 150, 42, .9)), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0; transition: opacity .35s var(--ease-soft); pointer-events: none;
+}
+.tile--amber { --glow: rgba(30, 43, 34, .55); }
+@media (hover: hover) { .tile:hover::before { opacity: 1; } }
+.tile:focus-visible::before { opacity: 1; }
+@supports not ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+  .tile::before { content: none; }
+}
+
+/* -- Footer: end-card curtain (class added by JS on desktop + motion) -- */
+.curtain .footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 0; }
+.curtain main { position: relative; z-index: 2; background: var(--cream); margin-bottom: var(--footer-h, 0px); }
+.curtain .footer__grid { transform: translate3d(0, -28px, 0); opacity: .4; will-change: transform, opacity; }
+
 /* ---------- Rendering hints ---------- */
 .pets, .pharmacy, .trusted, .contact { content-visibility: auto; }
 .pets { contain-intrinsic-size: auto 1500px; }
@@ -569,4 +748,26 @@ html:not(.js) .manifesto span { color: var(--ink); }
   .farm__frame img { transition: opacity .15s linear; transform: none; }
   .farm--js .beat { opacity: 1; }
   .pill, .pcard, .tile { transition: none; }
+
+  /* Scrollytelling v2 */
+  .js .hero__line-inner, .hero.loaded .hero__line-inner { transform: none; transition: none; }
+  .js .hero h1 em, .hero.loaded h1 em { color: var(--green-700); transition: none; }
+  .nav__glide { transition: opacity .25s var(--ease-soft); }
+  .js .manifesto span { filter: none; transform: none; transition: none; }
+  .manifesto span:last-child::after { transform: scaleX(1); transition: none; }
+  .print { transition: none; }
+  .js .kicker[data-reveal] .kicker__in, .js .kicker[data-reveal].in .kicker__in { clip-path: none; transition: none; }
+  .w__in, [data-reveal].in .w__in { transform: none; transition: none; }
+  .js .pcard[data-reveal] .pcard__icon path,
+  .js .pcard[data-reveal].in .pcard__icon path,
+  .js .tile[data-reveal] .tile__value--sm path,
+  .js .tile[data-reveal].in .tile__value--sm path { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+  .strip__track img { transition: none; }
+  .strip__track:hover li:not(:hover) img { opacity: 1; transform: none; }
+  .strip__track li:hover img { transform: none; box-shadow: var(--shadow-card); }
+  .mega__torch { display: none; }
+  .js .trusted__grid figure[data-reveal], .js .trusted__grid figure[data-reveal].in { clip-path: none; transition: none; }
+  .js .trusted__grid figure[data-reveal] img, .js .trusted__grid figure[data-reveal].in img { transform: none; transition: none; }
+  .js .trusted__grid figure[data-reveal] figcaption, .js .trusted__grid figure[data-reveal].in figcaption { opacity: 1; transition: none; }
+  .tile::before { transition: none; }
 }
