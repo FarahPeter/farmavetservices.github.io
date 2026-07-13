@@ -256,12 +256,6 @@
     heroStageIO.observe(heroMedia);
   }
 
-  function clearHeroScrub() {
-    if (heroCopy) { heroCopy.style.transform = ''; heroCopy.style.opacity = ''; }
-    if (heroMedia) heroMedia.style.transform = '';
-  }
-  onMQ(desktop, function () { if (!desktop.matches) clearHeroScrub(); });
-
   /* ---------- Manifesto word scrub + print trail ---------- */
   var manifesto = d.getElementById('manifesto-copy');
   var words = manifesto ? Array.prototype.slice.call(manifesto.querySelectorAll('span')) : [];
@@ -449,6 +443,7 @@
   var megaPX = 0, megaPY = 0;   // lerped position consumed by the rAF loop
   var torchX = 0, torchY = 0;
   var torchTick = false;
+  var torchSweepOn = false;     // touch: the rAF loop sweeps the torch with scroll
 
   if (mega) {
     var megaIO = new IntersectionObserver(function (entries) {
@@ -571,8 +566,7 @@
     root.style.setProperty('--footer-h', footerH + 'px');
   }
   function syncCurtain() {
-    var on = desktop.matches &&
-      footerEl && footerGrid && 'ResizeObserver' in window;
+    var on = !!(footerEl && footerGrid && 'ResizeObserver' in window);
     if (on === curtain) return;
     curtain = on;
     if (on) {
@@ -590,7 +584,6 @@
     onScroll();
   }
   syncCurtain();
-  onMQ(desktop, syncCurtain);
   // keyboard escape hatch: in curtain mode the footer sits behind main, so
   // focus landing on its links must bring the page to the bottom where the
   // footer is fully revealed (fixed elements never scroll into view)
@@ -641,8 +634,14 @@
     var max = root.scrollHeight - vh;
     var mRect = words.length ? manifesto.getBoundingClientRect() : null;
     var pRects = parallaxEls.map(function (p) { return p.frame.getBoundingClientRect(); });
-    var sRect = strip && strip.classList.contains('drift') ? strip.getBoundingClientRect() : null;
-    var sOverflow = sRect ? stripTrack.scrollWidth - strip.clientWidth : 0;
+    var sDrift = strip && strip.classList.contains('drift');
+    var sRect = strip ? strip.getBoundingClientRect() : null;
+    var sOverflow = sDrift && sRect ? stripTrack.scrollWidth - strip.clientWidth : 0;
+    var megaSweepRect = null;
+    if (megaTorch && !pointerFine()) {
+      var mgRect = mega.getBoundingClientRect();
+      if (mgRect.bottom > 0 && mgRect.top < vh) megaSweepRect = mgRect;
+    }
     var beatRects = null;
     var farmAway = false;
     if (beatsIO && stackLoaded && farm) {
@@ -676,8 +675,8 @@
       megaPY = megaTY;
     }
 
-    // hero exit dolly (desktop, once the load unveil has settled)
-    if (heroSettled && desktop.matches && heroCopy && heroMedia && y < heroBottom) {
+    // hero exit dolly (both breakpoints, once the load unveil has settled)
+    if (heroSettled && heroCopy && heroMedia && y < heroBottom) {
       var hp = clamp01(y / Math.max(1, heroBottom - vh * 0.2));
       heroCopy.style.transform = 'translate3d(0,' + (-hp * 40).toFixed(1) + 'px,0)';
       // dead zone: the CTAs never dim while the hero is still mostly on screen
@@ -701,7 +700,8 @@
 
     parallaxEls.forEach(function (p, i) {
       var rect = pRects[i];
-      if (rect.bottom < -80 || rect.top > vh + 80) return;
+      // zero-size = display:none at this breakpoint (mobile beat figures on desktop)
+      if (!rect.height || rect.bottom < -80 || rect.top > vh + 80) return;
       var prog = (rect.top + rect.height / 2 - vh / 2) / vh;
       var shift = Math.max(-1, Math.min(1, prog)) * p.depth * rect.height * 0.5;
       var dx = p.mark ? megaPX * 12 : 0;
@@ -741,9 +741,32 @@
       disableScrub();
     }
 
-    if (sRect && sRect.bottom > 0 && sRect.top < vh && sOverflow > 0) {
-      var sp = clamp01((vh - sRect.top) / (vh + sRect.height));
-      stripTrack.style.transform = 'translate3d(' + (-sp * sOverflow).toFixed(1) + 'px,0,0) skewX(' + skewC.toFixed(2) + 'deg)';
+    if (sRect && sRect.bottom > 0 && sRect.top < vh) {
+      if (sDrift) {
+        if (sOverflow > 0) {
+          var sp = clamp01((vh - sRect.top) / (vh + sRect.height));
+          stripTrack.style.transform = 'translate3d(' + (-sp * sOverflow).toFixed(1) + 'px,0,0) skewX(' + skewC.toFixed(2) + 'deg)';
+        }
+      } else {
+        // touch/manual mode keeps the swipeable strip but still shears it
+        // with scroll velocity; '' when at rest so no layer lingers
+        stripTrack.style.transform = skewC ? 'skewX(' + skewC.toFixed(2) + 'deg)' : '';
+      }
+    }
+
+    // touch devices: the torch sweeps across the mega card with scroll
+    // instead of following a cursor (the .lit layer is released offscreen)
+    if (megaTorch && !pointerFine()) {
+      if (megaSweepRect) {
+        if (!torchSweepOn) { torchSweepOn = true; megaTorch.classList.add('lit'); }
+        var mp = clamp01((vh - megaSweepRect.top) / (vh + megaSweepRect.height));
+        var tsx = megaSweepRect.width * (mp * 1.3 - 0.15) - 350;
+        var tsy = megaSweepRect.height * (0.95 - mp * 0.9) - 350;
+        megaTorch.style.transform = 'translate3d(' + tsx.toFixed(0) + 'px,' + tsy.toFixed(0) + 'px,0)';
+      } else if (torchSweepOn) {
+        torchSweepOn = false;
+        megaTorch.classList.remove('lit');
+      }
     }
 
     // footer curtain: the end card settles into place as the page runs out
