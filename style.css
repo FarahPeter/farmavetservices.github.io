@@ -62,9 +62,6 @@ html {
   scroll-padding-top: calc(var(--nav-h) + 24px);
   -webkit-text-size-adjust: 100%;
 }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-}
 
 body {
   font-family: var(--font-body);
@@ -427,7 +424,7 @@ html:not(.js) .manifesto span { color: var(--ink); }
 @media (max-width: 700px) {
   .stock { grid-template-columns: 1fr; }
 }
-/* .drift is applied by JS only when desktop + fine pointer + motion allowed */
+/* .drift is applied by JS only on desktop with a fine pointer */
 .strip.drift { overflow: hidden; }
 .strip.drift .strip__track { will-change: transform; }
 
@@ -525,8 +522,7 @@ html:not(.js) .manifesto span { color: var(--ink); }
 
 /* =====================================================================
    Scrollytelling v2 — layered motion & pointer systems
-   Ordered hero → footer. Hidden start-states are .js-gated; every
-   effect's reduced-motion override lives in the block at file end.
+   Ordered hero → footer. Hidden start-states are .js-gated.
    ===================================================================== */
 
 /* -- Hero: masked line rise + brand color settle -- */
@@ -702,10 +698,187 @@ html:not(.js) .print { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg))
   .tile::before { content: none; }
 }
 
-/* -- Footer: end-card curtain (class added by JS on desktop + motion) -- */
+/* -- Footer: end-card curtain (class added by JS on desktop) -- */
 .curtain .footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 0; }
 .curtain main { position: relative; z-index: 2; background: var(--cream); margin-bottom: var(--footer-h, 0px); }
 .curtain .footer__grid { transform: translate3d(0, -28px, 0); opacity: .4; will-change: transform, opacity; }
+
+/* =====================================================================
+   Scrollytelling v3 — deeper motion on both breakpoints
+   Same rules as v2: hidden start-states are .js-gated, transform /
+   opacity / clip-path only.
+   ===================================================================== */
+
+/* -- Hero: slow Ken Burns drift --
+   animates the `scale` property, which composes with the parallax
+   `transform` the rAF loop writes on the same img; JS pauses it via
+   .offstage when the hero leaves the viewport */
+@keyframes kenburns { from { scale: 1; } to { scale: 1.055; } }
+.hero.loaded .hero__media img { animation: kenburns 14s var(--ease-soft) 1.1s infinite alternate; }
+.hero.offstage .hero__media img { animation-play-state: paused; }
+
+/* -- Hero: eyebrow tracking settle -- */
+.js .eyebrow.hero__load { letter-spacing: .34em; }
+.hero.loaded .eyebrow.hero__load {
+  letter-spacing: .14em;
+  transition: opacity .65s var(--ease-out), transform .65s var(--ease-out), letter-spacing 1.2s var(--ease-out);
+}
+
+/* -- Nav: scrollspy dot under the section being read -- */
+.nav__links a { position: relative; }
+.nav__links a::after {
+  content: ""; position: absolute; left: 50%; bottom: 1px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--amber-500);
+  transform: translateX(-50%) scale(0);
+  transition: transform .35s var(--ease-out);
+}
+.nav__links a.active { color: var(--green-800); }
+.nav__links a.active::after { transform: translateX(-50%) scale(1); }
+
+/* -- Shared per-item cascade indices (delays read var(--li)) -- */
+.chips li:nth-child(1), .checklist li:nth-child(1), .mega__chips li:nth-child(1) { --li: 0; }
+.chips li:nth-child(2), .checklist li:nth-child(2), .mega__chips li:nth-child(2) { --li: 1; }
+.chips li:nth-child(3), .checklist li:nth-child(3), .mega__chips li:nth-child(3) { --li: 2; }
+.checklist li:nth-child(4) { --li: 3; }
+.checklist li:nth-child(5) { --li: 4; }
+.checklist li:nth-child(6) { --li: 5; }
+.checklist li:nth-child(7) { --li: 6; }
+.checklist li:nth-child(8) { --li: 7; }
+
+/* -- Doctor: portrait opens from a letterboxed crop --
+   start clip keeps >= 50% of the box visible for the reveal IO; the end
+   clip sits past the box so the card shadow is never cut at rest */
+.js .doctor__media[data-reveal] { clip-path: inset(12% 14% 12% 14% round var(--r-card)); }
+.js .doctor__media[data-reveal].in {
+  clip-path: inset(-40px round var(--r-card));
+  transition: opacity .65s var(--ease-out), transform .65s var(--ease-out),
+              clip-path .95s var(--ease-out) .08s;
+}
+
+/* -- Doctor: credential chips spring in one by one -- */
+@keyframes chipin {
+  0% { opacity: 0; transform: translateY(12px) scale(.85); }
+  65% { opacity: 1; transform: translateY(-2px) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+.js .chips[data-reveal].in li {
+  animation: chipin .55s var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0) * 85ms + var(--li, 0) * 80ms);
+}
+
+/* -- Farm: beat numbers pop up from the baseline -- */
+.js .beat__num[data-reveal] { transform: translateY(18px) scale(.75); transform-origin: left bottom; }
+
+/* -- Farm: mobile beat photos open with a wipe + settle -- */
+.js .beat__media[data-reveal] { clip-path: inset(8% 4% 26% 4% round var(--r-media)); }
+.js .beat__media[data-reveal] img { transform: scale(1.1) translateY(2%); }
+.js .beat__media[data-reveal]:not(.in) img { will-change: transform; }
+.js .beat__media[data-reveal].in {
+  clip-path: inset(-32px 0 -32px 0 round var(--r-media));
+  transition: opacity .6s var(--ease-out), transform .6s var(--ease-out),
+              clip-path .85s var(--ease-out) .05s;
+}
+.js .beat__media[data-reveal].in img { transform: none; transition: transform 1.05s var(--ease-out); }
+
+/* -- Checklists (farm beats + pharmacy stock): rows cascade in, each
+   check-circle pops just after its row lands -- */
+@keyframes liin { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes tickin { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.js .checklist[data-reveal] li, .js .stock__col[data-reveal] .checklist li { opacity: 0; }
+.js .checklist[data-reveal].in li, .js .stock__col[data-reveal].in .checklist li {
+  animation: liin .5s var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0) * 85ms + var(--li, 0) * 70ms);
+}
+.js .checklist[data-reveal].in li::before, .js .stock__col[data-reveal].in .checklist li::before {
+  animation: tickin .45s var(--ease-out) both;
+  animation-delay: calc(var(--stagger, 0) * 85ms + var(--li, 0) * 70ms + .1s);
+}
+
+/* -- Farm: rolling beat counter on the sticky frame (desktop only) -- */
+@media (min-width: 1024px) {
+  .farm__count {
+    position: absolute; left: 16px; bottom: 14px; z-index: 2;
+    display: flex; align-items: baseline; gap: 5px;
+    padding: 8px 14px; border-radius: var(--r-pill);
+    background: rgba(30, 43, 34, .55); color: var(--cream);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    font-family: var(--font-head); font-weight: 600; font-size: .92rem;
+    line-height: 1.2;
+  }
+  .farm__count-roll { display: block; height: 1.2em; overflow: hidden; }
+  .farm__count-roll b {
+    display: block; font-weight: 600;
+    transform: translateY(calc(var(--beat, 0) * -100%));
+    transition: transform .55s var(--ease-out);
+  }
+  .farm__count-total { font-size: .78em; opacity: .65; }
+}
+@media (max-width: 1023px) { .farm__count { display: none; } }
+
+/* -- Pets: banner parallax (img oversized like the hero pattern) + wipe -- */
+.pets__banner { position: relative; }
+.pets__banner img {
+  position: absolute; left: 0; top: -8%;
+  width: 100%; height: 116%; object-fit: cover;
+  will-change: transform;
+}
+.js .pets__banner[data-reveal] { clip-path: inset(10% 6% 10% 6% round var(--r-card)); }
+.js .pets__banner[data-reveal].in {
+  clip-path: inset(-40px round var(--r-card));
+  transition: opacity .65s var(--ease-out), transform .65s var(--ease-out),
+              clip-path .95s var(--ease-out) .08s;
+}
+
+/* -- Hover-lift restoration: the reveal system's `transform: none`
+   (specificity 0,3,0) was silently beating the .pcard/.tile :hover lift -- */
+@media (hover: hover) {
+  .js .pcard[data-reveal].in:hover { transform: translateY(-4px); }
+  .js .tile[data-reveal].in:hover { transform: translateY(-4px); }
+}
+
+/* -- Pets: pointer tilt + sheen (class + vars set by JS on fine pointers);
+   the :hover variant outranks the hover-lift fix above -- */
+.pcard { position: relative; }
+.pcard::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: radial-gradient(240px circle at var(--gx, 50%) var(--gy, 50%), rgba(217, 150, 42, .14), transparent 65%);
+  opacity: 0; transition: opacity .35s var(--ease-soft);
+  pointer-events: none;
+}
+.pcard__icon { transition: transform .3s var(--ease-out); }
+.js .pcard.tilt-live, .js .pcard.tilt-live:hover {
+  transform: perspective(850px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px);
+  transform-style: preserve-3d;
+  transition: box-shadow .25s var(--ease-out);
+  box-shadow: var(--shadow-card);
+  will-change: transform;
+}
+.js .pcard.tilt-live::after { opacity: 1; }
+.js .pcard.tilt-live .pcard__icon { transform: translateZ(26px); }
+
+/* -- Mega card: proof chips stagger in after the unveil -- */
+.js .mega[data-reveal] .mega__chips li { opacity: 0; transform: translateY(12px); }
+.js .mega[data-reveal].in .mega__chips li {
+  opacity: 1; transform: none;
+  transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+  transition-delay: calc(.5s + var(--li, 0) * 90ms);
+}
+
+/* -- Trusted: gentle zoom once the letterbox has opened -- */
+@media (hover: hover) and (pointer: fine) {
+  .js .trusted__grid figure[data-reveal].in:hover img {
+    transform: scale(1.045);
+    transition: transform .5s var(--ease-out);
+  }
+}
+
+/* -- Contact: phone numbers roll in digit by digit -- */
+.js .tile__value .d { display: inline-block; opacity: 0; transform: translateY(.55em); }
+.js .tile[data-reveal].in .tile__value .d {
+  opacity: 1; transform: none;
+  transition: opacity .4s var(--ease-out), transform .5s var(--ease-out);
+  transition-delay: calc(var(--stagger, 0) * 85ms + var(--d, 0) * 40ms + .1s);
+}
 
 /* ---------- Rendering hints ---------- */
 .pets, .pharmacy, .trusted, .contact { content-visibility: auto; }
@@ -745,40 +918,7 @@ html:not(.js) .print { opacity: .08; transform: scale(1) rotate(var(--pr, 0deg))
   .manifesto p { max-width: 34ch; }
 }
 
-/* ---------- Reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-  .js [data-reveal], .js .hero__load, .js .menu a {
-    opacity: 1; transform: none; transition: none;
-  }
-  .js .hero__media { clip-path: none; transform: none; transition: none; }
-  .js .mega[data-reveal] { clip-path: none; }
-  .hero__cue svg { animation: none; }
-  .tile__dot { animation: none; }
-  .mega.pulse .pill--amber { animation: none; }
-  .manifesto span { color: var(--ink); transition: none; }
-  .farm__frame img { transition: opacity .15s linear; transform: none; }
-  .farm--js .beat { opacity: 1; }
-  .pill, .pcard, .tile { transition: none; }
-
-  /* Scrollytelling v2 */
-  .js .hero__line-inner, .hero.loaded .hero__line-inner { transform: none; transition: none; }
-  .js .hero h1 em, .hero.loaded h1 em { color: var(--green-700); transition: none; }
-  .nav__glide { transition: opacity .25s var(--ease-soft); }
-  .js .manifesto span { filter: none; transform: none; transition: none; }
-  .manifesto span:last-child::after { transform: scaleX(1); transition: none; }
-  .print { transition: none; }
-  .js .kicker[data-reveal] .kicker__in, .js .kicker[data-reveal].in .kicker__in { clip-path: none; transition: none; }
-  .w__in, [data-reveal].in .w__in { transform: none; transition: none; }
-  .js .pcard[data-reveal] .pcard__icon path,
-  .js .pcard[data-reveal].in .pcard__icon path,
-  .js .tile[data-reveal] .tile__value--sm path,
-  .js .tile[data-reveal].in .tile__value--sm path { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
-  .strip__track img { transition: none; }
-  .strip__track:hover li:not(:hover) img { opacity: 1; transform: none; }
-  .strip__track li:hover img { transform: none; box-shadow: var(--shadow-card); }
-  .mega__torch { display: none; }
-  .js .trusted__grid figure[data-reveal], .js .trusted__grid figure[data-reveal].in { clip-path: none; transition: none; }
-  .js .trusted__grid figure[data-reveal] img, .js .trusted__grid figure[data-reveal].in img { transform: none; transition: none; }
-  .js .trusted__grid figure[data-reveal] figcaption, .js .trusted__grid figure[data-reveal].in figcaption { opacity: 1; transition: none; }
-  .tile::before { transition: none; }
-}
+/* ---------- Motion policy ----------
+   There is deliberately NO @media (prefers-reduced-motion) block in this
+   file: the site always plays its full motion design, on every device and
+   OS setting. Do not add one back — see CLAUDE.md. */

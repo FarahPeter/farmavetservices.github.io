@@ -187,6 +187,7 @@
             <img data-beat-img="0" data-src="images/web/services-2-800.webp" alt="" style="object-position: 50% 30%" />
             <div class="farm__wipe"><img data-beat-img="1" data-src="images/web/services-1-800.webp" alt="" style="object-position: 50% 42%" /></div>
             <div class="farm__wipe"><img data-beat-img="2" data-src="images/web/landscape-landscape-800.webp" alt="" /></div>
+            <div class="farm__count"><span class="farm__count-roll"><b>01</b><b>02</b><b>03</b></span><span class="farm__count-total">/ 03</span></div>
           </div>
           <div class="farm__rail"><i></i><i></i><i></i></div>
         </div>
@@ -194,16 +195,16 @@
 
       <div class="farm__beats">
         <article class="beat" data-beat="0">
-          <figure class="beat__media">
+          <figure class="beat__media" data-reveal>
             <picture>
               <source type="image/webp" srcset="images/web/services-2-800.webp" />
               <img src="images/web/services-2-800.jpg" width="800" height="1422" loading="lazy" decoding="async" style="object-position: 50% 30%" alt="Dr Joseph giving a thumbs up beside a newborn calf" />
             </picture>
           </figure>
-          <p class="beat__num" aria-hidden="true">01</p>
-          <h3>Reproduction &amp; AI</h3>
-          <p>Fertility is the farm's engine. We keep it running with modern reproductive medicine, on site.</p>
-          <ul class="checklist">
+          <p class="beat__num" aria-hidden="true" data-reveal style="--stagger:0">01</p>
+          <h3 data-reveal style="--stagger:1">Reproduction &amp; AI</h3>
+          <p data-reveal style="--stagger:2">Fertility is the farm's engine. We keep it running with modern reproductive medicine, on site.</p>
+          <ul class="checklist" data-reveal style="--stagger:3">
             <li>Ultrasound pregnancy diagnosis</li>
             <li>Artificial insemination</li>
             <li>Fertility programs &amp; reproductive hormones</li>
@@ -211,21 +212,21 @@
         </article>
 
         <article class="beat" data-beat="1">
-          <figure class="beat__media">
+          <figure class="beat__media" data-reveal>
             <picture>
               <source type="image/webp" srcset="images/web/services-1-800.webp" />
               <img src="images/web/services-1-800.jpg" width="800" height="1422" loading="lazy" decoding="async" style="object-position: 50% 42%" alt="Dr Joseph with newborn twin calves and their mother in a straw-bedded barn" />
             </picture>
           </figure>
-          <p class="beat__num" aria-hidden="true">02</p>
-          <h3>New life, safely delivered.</h3>
-          <p>Calving assistance, obstetric emergencies and neonatal care — and on-site surgery when it can't wait.</p>
-          <ul class="checklist">
+          <p class="beat__num" aria-hidden="true" data-reveal style="--stagger:0">02</p>
+          <h3 data-reveal style="--stagger:1">New life, safely delivered.</h3>
+          <p data-reveal style="--stagger:2">Calving assistance, obstetric emergencies and neonatal care — and on-site surgery when it can't wait.</p>
+          <ul class="checklist" data-reveal style="--stagger:3">
             <li>Calving &amp; obstetric emergencies</li>
             <li>Newborn calf care</li>
             <li>On-site surgeries</li>
           </ul>
-          <button class="gate" type="button">
+          <button class="gate" type="button" data-reveal style="--stagger:4">
             <span class="gate__thumb">
               <img src="images/web/gate-thumb-160.webp" width="160" height="160" loading="lazy" decoding="async" alt="" />
             </span>
@@ -235,16 +236,16 @@
         </article>
 
         <article class="beat" data-beat="2">
-          <figure class="beat__media">
+          <figure class="beat__media" data-reveal>
             <picture>
               <source type="image/webp" srcset="images/web/landscape-landscape-800.webp" />
               <img src="images/web/landscape-landscape-800.jpg" width="800" height="1066" loading="lazy" decoding="async" alt="Dr Joseph on a pasture visit, surrounded by the herd" />
             </picture>
           </figure>
-          <p class="beat__num" aria-hidden="true">03</p>
-          <h3>Herd health, on your farm.</h3>
-          <p>Prevention beats treatment. We build vaccination and prevention programs around your herd — and we come to you, with an emergency line for the moments that can't wait.</p>
-          <ul class="checklist">
+          <p class="beat__num" aria-hidden="true" data-reveal style="--stagger:0">03</p>
+          <h3 data-reveal style="--stagger:1">Herd health, on your farm.</h3>
+          <p data-reveal style="--stagger:2">Prevention beats treatment. We build vaccination and prevention programs around your herd — and we come to you, with an emergency line for the moments that can't wait.</p>
+          <ul class="checklist" data-reveal style="--stagger:3">
             <li>Livestock vaccination programs</li>
             <li>Disease prevention &amp; mastitis control</li>
             <li>On-farm consultations &amp; emergencies</li>
@@ -269,6 +270,7 @@
                srcset="images/web/products-product2-800.jpg 800w, images/web/products-product2-1600.jpg 1600w"
                sizes="(min-width: 1360px) 1200px, 94vw"
                width="1600" height="1200" loading="lazy" decoding="async"
+               data-parallax="0.12"
                alt="Wall of pet accessories in the Farmavet shop — leashes, harnesses, grooming tools and treats" />
         </picture>
       </figure>
@@ -318,8 +320,8 @@
     </div>
     <p class="strip__caption container" data-reveal>Everything below is on our shelves — with a vet behind the counter.</p>
 
-    <div class="container stock" data-reveal>
-      <div class="stock__col">
+    <div class="container stock">
+      <div class="stock__col" data-reveal style="--stagger:0">
         <h3>For the farm</h3>
         <ul class="checklist">
           <li>Veterinary medicines — antibiotics, anti&#8209;inflammatories, reproductive hormones</li>
@@ -331,7 +333,7 @@
           <li>Calf tonics &amp; oral rehydration salts</li>
         </ul>
       </div>
-      <div class="stock__col">
+      <div class="stock__col" data-reveal style="--stagger:1">
         <h3>For your pet</h3>
         <ul class="checklist">
           <li>Vaccines &amp; preventive care — flea, tick and deworming</li>

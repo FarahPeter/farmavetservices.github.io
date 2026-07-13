@@ -1,13 +1,14 @@
 /* Farmavet Services — scroll narrative
    Architecture: one reveal IO, one farm-beats IO, one rAF scroll loop
    (reads batched before writes). Pointer effects cache their rect on
-   entry and write only rAF-throttled transforms / custom properties. */
+   entry and write only rAF-throttled transforms / custom properties.
+   Motion policy: this site intentionally ignores prefers-reduced-motion
+   — do not add reduce gates here (see CLAUDE.md). */
 (function () {
   'use strict';
 
   var d = document;
   var root = d.documentElement;
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var desktop = window.matchMedia('(min-width: 1024px)');
   var finePointer = window.matchMedia('(pointer: fine)');
   var hoverable = window.matchMedia('(hover: hover)');
@@ -21,8 +22,8 @@
 
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
-  // pointer-driven extras need a hovering fine pointer and motion allowed
-  function pointerFine() { return finePointer.matches && hoverable.matches && !reduce.matches; }
+  // pointer-driven extras need a hovering fine pointer
+  function pointerFine() { return finePointer.matches && hoverable.matches; }
 
   /* ---------- Navigation ---------- */
   var nav = d.querySelector('.nav');
@@ -127,6 +128,36 @@
     onMQ(hoverable, syncGlide);
   }
 
+  /* ---------- Scrollspy: amber dot tracks the section being read ---------- */
+  var spyLink = {};
+  d.querySelectorAll('.nav__links a[href^="#"]').forEach(function (a) {
+    spyLink[a.getAttribute('href').slice(1)] = a;
+  });
+  var spyCurrent = null;
+  function setSpy(id) {
+    if (id === spyCurrent) return;
+    if (spyCurrent && spyLink[spyCurrent]) {
+      spyLink[spyCurrent].classList.remove('active');
+      spyLink[spyCurrent].removeAttribute('aria-current');
+    }
+    spyCurrent = id;
+    if (id && spyLink[id]) {
+      spyLink[id].classList.add('active');
+      spyLink[id].setAttribute('aria-current', 'true');
+    }
+  }
+  var spyIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var id = entry.target.id;
+      if (entry.isIntersecting) setSpy(id);
+      else if (spyCurrent === id) setSpy(null); // left the band with no successor
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' }); // a thin band around the reading line
+  ['farm', 'pets', 'pharmacy', 'contact'].forEach(function (id) {
+    var s = d.getElementById(id);
+    if (s && spyLink[id]) spyIO.observe(s);
+  });
+
   /* ---------- Kicker print-wipe wrapper ----------
      the wipe clips an inner span: clipping the observed [data-reveal]
      element itself would zero its intersection area and the reveal IO
@@ -142,31 +173,29 @@
      The real text stays in the a11y tree as an sr-only TEXT NODE (an
      aria-label would be skipped by page-translation tools); the animated
      copy is one aria-hidden container. */
-  if (!reduce.matches) {
-    d.querySelectorAll('.section-head h2[data-reveal], .doctor__text h2[data-reveal]').forEach(function (h) {
-      var text = h.textContent;
-      var sr = d.createElement('span');
-      sr.className = 'sr-only';
-      sr.textContent = text;
-      var vis = d.createElement('span');
-      vis.setAttribute('aria-hidden', 'true');
-      // split on plain spaces only — the &nbsp; in "Abou Nasser" stays one token
-      text.split(' ').forEach(function (word, i) {
-        if (i) vis.appendChild(d.createTextNode(' '));
-        var outer = d.createElement('span');
-        outer.className = 'w';
-        outer.style.setProperty('--w', i);
-        var inner = d.createElement('span');
-        inner.className = 'w__in';
-        inner.textContent = word;
-        outer.appendChild(inner);
-        vis.appendChild(outer);
-      });
-      h.textContent = '';
-      h.appendChild(sr);
-      h.appendChild(vis);
+  d.querySelectorAll('.section-head h2[data-reveal], .doctor__text h2[data-reveal]').forEach(function (h) {
+    var text = h.textContent;
+    var sr = d.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = text;
+    var vis = d.createElement('span');
+    vis.setAttribute('aria-hidden', 'true');
+    // split on plain spaces only — the &nbsp; in "Abou Nasser" stays one token
+    text.split(' ').forEach(function (word, i) {
+      if (i) vis.appendChild(d.createTextNode(' '));
+      var outer = d.createElement('span');
+      outer.className = 'w';
+      outer.style.setProperty('--w', i);
+      var inner = d.createElement('span');
+      inner.className = 'w__in';
+      inner.textContent = word;
+      outer.appendChild(inner);
+      vis.appendChild(outer);
     });
-  }
+    h.textContent = '';
+    h.appendChild(sr);
+    h.appendChild(vis);
+  });
 
   /* ---------- Reveal on scroll (one-shot) ---------- */
   var revealIO = new IntersectionObserver(function (entries) {
@@ -218,6 +247,15 @@
     });
   });
 
+  // the Ken Burns drift is compositor-only, but still: don't run it while
+  // the hero is offscreen
+  if (hero && heroMedia) {
+    var heroStageIO = new IntersectionObserver(function (entries) {
+      hero.classList.toggle('offstage', !entries[0].isIntersecting);
+    });
+    heroStageIO.observe(heroMedia);
+  }
+
   function clearHeroScrub() {
     if (heroCopy) { heroCopy.style.transform = ''; heroCopy.style.opacity = ''; }
     if (heroMedia) heroMedia.style.transform = '';
@@ -230,12 +268,6 @@
   var prints = Array.prototype.slice.call(d.querySelectorAll('.manifesto .print'));
   var inkCount = -1;
   var printCount = -1;
-  function inkAll() {
-    words.forEach(function (w) { w.classList.add('ink'); });
-    prints.forEach(function (g) { g.classList.add('on'); });
-    inkCount = words.length;
-    printCount = prints.length;
-  }
 
   /* ---------- Farm sticky beats + scrubbed shutter-wipe ---------- */
   var farm = d.querySelector('.farm');
@@ -243,6 +275,7 @@
   var stackImgs = Array.prototype.slice.call(d.querySelectorAll('[data-beat-img]'));
   var wipes = Array.prototype.slice.call(d.querySelectorAll('.farm__wipe'));
   var railDots = Array.prototype.slice.call(d.querySelectorAll('.farm__rail i'));
+  var farmCount = d.querySelector('.farm__count');
   var beatsIO = null;
   var stackLoaded = false;
   var scrubOn = false;
@@ -257,6 +290,7 @@
     stackImgs.forEach(function (img, k) { img.classList.toggle('active', k === i); });
     railDots.forEach(function (dot, k) { dot.classList.toggle('on', k === i); });
     beats.forEach(function (b, k) { b.classList.toggle('active', k === i); });
+    if (farmCount) farmCount.style.setProperty('--beat', i);
   }
 
   function disableScrub() {
@@ -358,6 +392,53 @@
     });
   }
 
+  /* ---------- Pet cards: pointer tilt + sheen ---------- */
+  var tiltCards = Array.prototype.slice.call(d.querySelectorAll('.pcard'));
+  function clearTilt(card) {
+    card.classList.remove('tilt-live');
+    card.style.removeProperty('--rx');
+    card.style.removeProperty('--ry');
+    card.style.removeProperty('--gx');
+    card.style.removeProperty('--gy');
+  }
+  tiltCards.forEach(function (card) {
+    var rect = null;
+    var sy = 0;
+    var tick = false;
+    var rx = 0, ry = 0, gx = 50, gy = 50;
+    card.addEventListener('pointerenter', function (e) {
+      if (!pointerFine() || e.pointerType === 'touch') return;
+      rect = card.getBoundingClientRect();
+      sy = window.pageYOffset;
+      card.classList.add('tilt-live');
+    });
+    card.addEventListener('pointermove', function (e) {
+      if (!rect || !pointerFine()) return;
+      var top = rect.top - (window.pageYOffset - sy);
+      var nx = clamp01((e.clientX - rect.left) / rect.width) * 2 - 1;
+      var ny = clamp01((e.clientY - top) / rect.height) * 2 - 1;
+      ry = nx * 4;
+      rx = -ny * 3;
+      gx = (nx + 1) * 50;
+      gy = (ny + 1) * 50;
+      if (!tick) {
+        tick = true;
+        requestAnimationFrame(function () {
+          tick = false;
+          if (!rect) return;
+          card.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+          card.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+          card.style.setProperty('--gx', gx.toFixed(1) + '%');
+          card.style.setProperty('--gy', gy.toFixed(1) + '%');
+        });
+      }
+    });
+    card.addEventListener('pointerleave', function () {
+      rect = null;
+      clearTilt(card);
+    });
+  });
+
   /* ---------- Mega card: pulse + torchlight + watermark drift ---------- */
   var mega = d.querySelector('.mega');
   var megaTorch = mega ? mega.querySelector('.mega__torch') : null;
@@ -375,7 +456,7 @@
       megaIO.disconnect();
       var seen = false;
       try { seen = sessionStorage.getItem('fv-pulse') === '1'; } catch (e) {}
-      if (!seen && !reduce.matches) {
+      if (!seen) {
         mega.classList.add('pulse');
         try { sessionStorage.setItem('fv-pulse', '1'); } catch (e) {}
         setTimeout(function () { mega.classList.remove('pulse'); }, 3000);
@@ -422,6 +503,31 @@
     });
   }
 
+  /* ---------- Contact numbers: odometer digit roll ----------
+     same a11y pattern as the heading cascade: real text stays as an
+     sr-only text node, the animated copy is one aria-hidden container */
+  d.querySelectorAll('.contact__grid .tile__value').forEach(function (v) {
+    if (v.children.length) return; // the maps tile keeps its icon + label
+    var text = v.textContent;
+    var sr = d.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = text;
+    var vis = d.createElement('span');
+    vis.setAttribute('aria-hidden', 'true');
+    var di = 0;
+    text.split('').forEach(function (ch) {
+      if (ch === ' ') { vis.appendChild(d.createTextNode(' ')); return; }
+      var s = d.createElement('span');
+      s.className = 'd';
+      s.style.setProperty('--d', di++);
+      s.textContent = ch;
+      vis.appendChild(s);
+    });
+    v.textContent = '';
+    v.appendChild(sr);
+    v.appendChild(vis);
+  });
+
   /* ---------- Contact tiles: cursor-tracking border glow ---------- */
   d.querySelectorAll('.contact__grid .tile').forEach(function (tile) {
     var rect = null;
@@ -465,7 +571,7 @@
     root.style.setProperty('--footer-h', footerH + 'px');
   }
   function syncCurtain() {
-    var on = desktop.matches && !reduce.matches &&
+    var on = desktop.matches &&
       footerEl && footerGrid && 'ResizeObserver' in window;
     if (on === curtain) return;
     curtain = on;
@@ -502,7 +608,7 @@
   var stripTrack = d.querySelector('.strip__track');
   function syncDrift() {
     if (!strip || !stripTrack) return;
-    var on = desktop.matches && finePointer.matches && !reduce.matches;
+    var on = desktop.matches && finePointer.matches;
     strip.classList.toggle('drift', on);
     if (!on) stripTrack.style.transform = '';
   }
@@ -522,21 +628,24 @@
     });
   var ticking = false;
 
+  // scroll velocity → pharmacy strip shear; decays back to rest between frames
+  var lastVy = window.pageYOffset;
+  var skewC = 0;
+
   function update() {
     ticking = false;
-    var motion = !reduce.matches;
 
     /* -- reads -- */
     var y = window.pageYOffset;
     var vh = window.innerHeight;
     var max = root.scrollHeight - vh;
-    var mRect = motion && words.length ? manifesto.getBoundingClientRect() : null;
-    var pRects = motion ? parallaxEls.map(function (p) { return p.frame.getBoundingClientRect(); }) : null;
-    var sRect = motion && strip && strip.classList.contains('drift') ? strip.getBoundingClientRect() : null;
+    var mRect = words.length ? manifesto.getBoundingClientRect() : null;
+    var pRects = parallaxEls.map(function (p) { return p.frame.getBoundingClientRect(); });
+    var sRect = strip && strip.classList.contains('drift') ? strip.getBoundingClientRect() : null;
     var sOverflow = sRect ? stripTrack.scrollWidth - strip.clientWidth : 0;
     var beatRects = null;
     var farmAway = false;
-    if (motion && beatsIO && stackLoaded && farm) {
+    if (beatsIO && stackLoaded && farm) {
       var fRect = farm.getBoundingClientRect();
       if (fRect.bottom > -40 && fRect.top < vh + 40) {
         beatRects = beats.map(function (b) { return b.getBoundingClientRect(); });
@@ -550,10 +659,12 @@
     root.style.setProperty('--scroll-p', max > 0 ? (y / max).toFixed(4) : '0');
     if (cue && y > 40 && !cue.classList.contains('gone')) cue.classList.add('gone');
 
-    if (!motion) {
-      if (inkCount !== words.length) inkAll();
-      return;
-    }
+    // velocity shear step (consumed by the strip write below)
+    var vel = y - lastVy;
+    lastVy = y;
+    var skewT = Math.max(-2.4, Math.min(2.4, vel * 0.05));
+    skewC += (skewT - skewC) * 0.14;
+    if (Math.abs(skewC) < 0.02 && Math.abs(skewT) < 0.02) skewC = 0;
 
     // mega watermark lerp step (consumed by the parallax writes below)
     var megaConverging = Math.abs(megaTX - megaPX) > 0.002 || Math.abs(megaTY - megaPY) > 0.002;
@@ -632,7 +743,7 @@
 
     if (sRect && sRect.bottom > 0 && sRect.top < vh && sOverflow > 0) {
       var sp = clamp01((vh - sRect.top) / (vh + sRect.height));
-      stripTrack.style.transform = 'translate3d(' + (-sp * sOverflow).toFixed(1) + 'px,0,0)';
+      stripTrack.style.transform = 'translate3d(' + (-sp * sOverflow).toFixed(1) + 'px,0,0) skewX(' + skewC.toFixed(2) + 'deg)';
     }
 
     // footer curtain: the end card settles into place as the page runs out
@@ -645,7 +756,7 @@
       }
     }
 
-    if (megaConverging) onScroll();
+    if (megaConverging || skewC !== 0) onScroll();
   }
 
   function onScroll() {
@@ -654,19 +765,5 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', function () { measureHero(); onScroll(); });
   window.addEventListener('load', function () { measureHero(); onScroll(); });
-  onMQ(reduce, function () {
-    if (reduce.matches) {
-      inkAll();
-      parallaxEls.forEach(function (p) { p.el.style.transform = ''; });
-      clearHeroScrub();
-      disableScrub();
-      magnets.forEach(clearMagnet);
-      megaTX = megaTY = megaPX = megaPY = 0;
-      if (megaTorch) { megaTorch.classList.remove('lit'); megaRect = null; }
-    }
-    syncDrift();
-    syncCurtain();
-    onScroll();
-  });
   update();
 })();
